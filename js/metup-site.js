@@ -7,6 +7,27 @@ const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const isEmail = v => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v.trim());
 
+/* Endpoint del backend (Google Apps Script Web App). */
+const API_URL = 'https://script.google.com/macros/s/AKfycbwe73rzaMn1kSYBS5CS6apRokcKlxM0WGMLx7M1sXYGMuF5eEw8J7BcALun-sKv9X9L/exec';
+const API_TOKEN = 'metup26_w_gZRbWG9mNOFjwMZBjEyuYx545PogJVqZ00QKZBlm';
+
+/* Content-Type text/plain: evita il preflight CORS, che Apps Script non gestisce. */
+async function apiPost(action, data) {
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ token: API_TOKEN, action, data })
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+function busy(btn, on, testo) {
+  if (!btn) return;
+  if (on) { btn.dataset.lab = btn.innerHTML; btn.disabled = true; btn.innerHTML = testo || 'Invio in corso…'; }
+  else { btn.disabled = false; if (btn.dataset.lab) btn.innerHTML = btn.dataset.lab; }
+}
+
 let bound = false;
 
 export function initMetUp(opts = {}) {
@@ -15,7 +36,7 @@ export function initMetUp(opts = {}) {
   bound = true;
 
   const startDate = opts.startDate || '2026-10-14T10:00:00';
-  const registrate = (opts.emailRegistrate || ['mario.rossi@agenziaenergia.it', 'l.bianchi@partnerenergy.it']).map(e => e.toLowerCase());
+  const registrate = (opts.emailRegistrate || []).map(e => e.toLowerCase());
 
   /* ---------------- FAQ ---------------- */
   $$('.faq__q').forEach(btn => btn.addEventListener('click', () => {
@@ -307,6 +328,17 @@ export function initMetUp(opts = {}) {
     return ok;
   }
 
+  function erroreInvio() {
+    openModal({
+      title: 'Non siamo riusciti a registrarti',
+      body: `<p class="modal__p">Si è verificato un problema nell'invio dei dati. I tuoi dati non sono andati persi: riprova tra qualche istante.</p>
+             <p class="modal__p">Se il problema persiste, scrivi al Team Marketing all'indirizzo <strong>events@metenergiaitalia.it</strong>.</p>`,
+      cta: '<button class="btn btn--outline btn--full" id="m-err">Chiudi</button>',
+      ico: ICO_I, grad: 'var(--grad-01)'
+    });
+    $('#m-err').addEventListener('click', closeModal);
+  }
+
   function duplicato() {
     openModal({
       title: 'Risulti già registrato a MET UP!',
@@ -365,10 +397,16 @@ export function initMetUp(opts = {}) {
     $('#privacy-opt').classList.toggle('is-sel', e.target.checked);
   });
 
-  $('#btn-submit-yes').addEventListener('click', () => {
+  $('#btn-submit-yes').addEventListener('click', async e => {
     if (!$('#f-privacy').checked) { $('#privacy-err').classList.add('is-on'); $('#f-privacy').focus(); return; }
     const d = collect();
-    console.log('[MET UP! prototipo] payload registrazione', { ...d, docNumero: '***protetto***' });
+    const btn = e.currentTarget;
+    busy(btn, true);
+    let out;
+    try { out = await apiPost('registrazione', d); }
+    catch (err) { console.error('[MET UP!] invio registrazione', err); busy(btn, false); erroreInvio(); return; }
+    busy(btn, false);
+    if (!out.ok) { if (out.error === 'duplicato') duplicato(); else erroreInvio(); return; }
     registrate.push(d.email.toLowerCase());
     formYes.classList.add('hidden');
     choice.innerHTML = `<div style="grid-column:1/-1;background:rgba(107,192,75,.14);border:1px solid rgba(107,192,75,.45);
@@ -385,7 +423,7 @@ export function initMetUp(opts = {}) {
     $('#m-back').addEventListener('click', () => { closeModal(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
   });
 
-  $('#btn-submit-no').addEventListener('click', () => {
+  $('#btn-submit-no').addEventListener('click', async e => {
     let ok = true, first = null;
     ['#n-nome', '#n-cognome', '#n-agenzia', '#n-email'].forEach(id => {
       const inp = $(id); let bad = !inp.value.trim();
@@ -395,7 +433,17 @@ export function initMetUp(opts = {}) {
     if (!ok) { first.focus(); return; }
     const mail = $('#n-email').value.trim().toLowerCase();
     if (registrate.includes(mail)) { duplicato(); return; }
-    console.log('[MET UP! prototipo] payload NON PARTECIPA', { email: mail, stato: 'NON PARTECIPA' });
+    const btn = e.currentTarget;
+    busy(btn, true);
+    let out;
+    try {
+      out = await apiPost('rifiuto', {
+        nome: $('#n-nome').value.trim(), cognome: $('#n-cognome').value.trim(),
+        agenzia: $('#n-agenzia').value.trim(), email: mail, messaggio: $('#n-msg').value.trim()
+      });
+    } catch (err) { console.error('[MET UP!] invio rifiuto', err); busy(btn, false); erroreInvio(); return; }
+    busy(btn, false);
+    if (!out.ok) { if (out.error === 'duplicato') duplicato(); else erroreInvio(); return; }
     registrate.push(mail);
     formNo.classList.add('hidden');
     choice.innerHTML = `<div style="grid-column:1/-1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);
@@ -413,7 +461,7 @@ export function initMetUp(opts = {}) {
   });
 
   /* ---------------- FORM CONTATTI ---------------- */
-  $('#btn-contact').addEventListener('click', () => {
+  $('#btn-contact').addEventListener('click', async e => {
     let ok = true, first = null;
     ['#c-nome', '#c-cognome', '#c-agenzia', '#c-email', '#c-ogg', '#c-msg'].forEach(id => {
       const inp = $(id); let bad = !inp.value.trim();
@@ -421,10 +469,18 @@ export function initMetUp(opts = {}) {
       fieldErr(inp, bad); if (bad) { ok = false; if (!first) first = inp; }
     });
     if (!ok) { first.focus(); return; }
-    console.log('[MET UP! prototipo] payload richiesta partner', {
-      nome: $('#c-nome').value, cognome: $('#c-cognome').value, agenzia: $('#c-agenzia').value,
-      email: $('#c-email').value, oggetto: $('#c-ogg').value, messaggio: $('#c-msg').value
-    });
+    const btn = e.currentTarget;
+    busy(btn, true);
+    let out;
+    try {
+      out = await apiPost('richiesta', {
+        nome: $('#c-nome').value.trim(), cognome: $('#c-cognome').value.trim(),
+        agenzia: $('#c-agenzia').value.trim(), email: $('#c-email').value.trim(),
+        oggetto: $('#c-ogg').value, messaggio: $('#c-msg').value.trim()
+      });
+    } catch (err) { console.error('[MET UP!] invio richiesta', err); busy(btn, false); erroreInvio(); return; }
+    busy(btn, false);
+    if (!out.ok) { erroreInvio(); return; }
     ['#c-nome', '#c-cognome', '#c-agenzia', '#c-email', '#c-msg'].forEach(id => $(id).value = '');
     $('#c-ogg').value = '';
     openModal({
