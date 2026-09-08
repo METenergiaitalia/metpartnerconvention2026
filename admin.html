@@ -225,19 +225,15 @@ td b{font-weight:700}
         <input class="inp" id="lg-mail" type="email" style="width:100%" value="marketing1@metenergiaitalia.it" />
       </div>
       <div>
-        <label class="lb" for="lg-pw">Password</label>
-        <input class="inp" id="lg-pw" type="password" style="width:100%" value="demo-prototipo" />
-      </div>
-      <div>
-        <label class="lb" for="lg-otp">Codice a 6 cifre (2FA)</label>
-        <input class="inp" id="lg-otp" type="text" inputmode="numeric" maxlength="6" style="width:100%" value="000000" />
+        <label class="lb" for="lg-pw">Codice di accesso</label>
+        <input class="inp" id="lg-pw" type="password" style="width:100%" placeholder="Incolla qui il codice ricevuto dall'IT" />
+        <span id="lg-err" style="display:none;font-size:12.5px;color:#c0392b;font-weight:600;margin-top:6px"></span>
       </div>
       <button class="btn btn--p" id="lg-go" style="width:100%;padding:15px">Accedi</button>
     </div>
     <div class="login__demo">
-      <b>Prototipo.</b> Nessuna autenticazione reale: i dati sono di esempio e vivono solo in questa pagina.
-      Nell'implementazione definitiva: account individuali per ciascuna organizzatrice, password policy MET,
-      2FA e log degli accessi.
+      <b>Il codice non è memorizzato nella pagina.</b> Va incollato a ogni accesso e resta solo nella sessione
+      del browser, fino alla chiusura della scheda. Se non lo hai, richiedilo all'IT: è il token del backend.
     </div>
   </div>
 </div>
@@ -265,6 +261,7 @@ td b{font-weight:700}
     <div class="top">
       <button class="hb" id="hb" aria-label="Apri il menu"><i></i><i></i><i></i></button>
       <h1 id="view-t">Dashboard<span class="top__sub" id="view-s">MET UP! – MET Partner Convention 2026 · 14–15 ottobre 2026</span></h1>
+      <button class="btn btn--o btn--xs" id="reload">Aggiorna dati</button>
       <a class="btn btn--o btn--xs" href="index.html" target="_blank" rel="noopener">Vedi il sito ↗</a>
     </div>
 
@@ -311,7 +308,7 @@ td b{font-weight:700}
       </div>
       <div class="note note--p" style="margin-top:14px">
         <span>🔒</span>
-        <div><b>Dati del documento.</b> Non compaiono in questa tabella: sono visibili solo nella scheda del singolo partecipante, mascherati, e solo agli account con ruolo autorizzato. Ogni visualizzazione in chiaro viene registrata nel log amministrativo.</div>
+        <div><b>Dati del documento.</b> Data e luogo di nascita, residenza e documento di identità non transitano da questa pagina: restano nel foglio Google protetto, accessibile solo agli account autorizzati.</div>
       </div>
     </section>
 
