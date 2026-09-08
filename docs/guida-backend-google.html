@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MET UP! 2026 — Guida IT: backend a costo zero con Google Sheets + Apps Script</title>
+<style>
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:400;font-display:swap;src:url(../assets/fonts/montserrat-400.woff2) format("woff2")}
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:600;font-display:swap;src:url(../assets/fonts/montserrat-600.woff2) format("woff2")}
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:700;font-display:swap;src:url(../assets/fonts/montserrat-700.woff2) format("woff2")}
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:800;font-display:swap;src:url(../assets/fonts/montserrat-800.woff2) format("woff2")}
+body{margin:0;font-family:"Montserrat","Helvetica Neue",Arial,sans-serif;color:#0b2b36}
+doc-page:not(:defined){visibility:hidden}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;background:#f2f8fa;padding:1px 5px;border-radius:5px}
+h2{font-size:18px;font-weight:800;letter-spacing:-.02em;margin:28px 0 8px;color:#005870;break-after:avoid}
+p,li{font-size:13.5px}
+ul,ol{padding-left:20px;margin:0;line-height:1.65}
+.box{border:1px solid #e2ecf0;border-radius:14px;overflow:hidden;font-size:13px;break-inside:avoid}
+.r{display:grid;grid-template-columns:158px 1fr;gap:12px;padding:11px 14px;border-bottom:1px solid #e2ecf0}
+.r:last-child{border-bottom:0}
+</style>
+<script src="../js/doc-page.js"></script>
+</head>
+<body>
+<doc-page margin="0.85in">
+  <div slot="header" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding-bottom:8px;border-bottom:1px solid #e2ecf0;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#4a6a76">
+    <span>MET UP! 2026 · Guida IT — backend Google a costo zero</span>
+    <span>Uso interno · MET Energia Italia</span>
+  </div>
+  <div slot="footer" style="padding-top:8px;border-top:1px solid #e2ecf0;font-size:9.5px;color:#4a6a76">
+    Team Marketing MET Energia Italia · events@metenergiaitalia.it
+  </div>
+
+  <div style="background:url(../assets/img/met-logo-primary.png) no-repeat left center/contain;width:80px;height:56px;margin-bottom:20px"></div>
+  <div style="font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#0095b4">Documento per IT interno</div>
+  <h1 style="font-size:31px;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin:10px 0 0">Backend a costo zero:<br />Google Sheets + Apps Script</h1>
+  <p style="color:#4a6a76;margin:14px 0 0;max-width:62ch;font-size:14px">MET UP! – MET Partner Convention 2026. Obiettivo: raccogliere le registrazioni dei partner, inviare l'email di conferma e far vedere alle organizzatrici tutto ciò che arriva — <b style="color:#0b2b36">senza alcun costo</b> e senza server da gestire, usando strumenti Google.</p>
+
+  <div style="background:#f2f8fa;border:1px solid #e2ecf0;border-radius:14px;padding:16px 18px;margin-top:22px;font-size:13px;break-inside:avoid">
+    <b style="display:block;margin-bottom:6px">Architettura in una riga</b>
+    Landing statica (GitHub Pages) → <code>POST</code> a una Web App di <b>Google Apps Script</b> → scrittura su <b>Google Sheet</b> (il database) → invio automatico dell'email di conferma. Le organizzatrici leggono i dati dal foglio e dall'area riservata. Codice pronto: <code>apps-script/Codice.gs</code> nel repository.
+  </div>
+
+  <h2>1. Cosa serve (tutto gratuito)</h2>
+  <div class="box">
+    <div class="r"><b>Google Drive / Sheets</b><span>Un foglio «MET UP 2026 — Registrazioni» con i fogli <code>Partecipanti</code>, <code>Richieste</code>, <code>Log</code>. È il database.</span></div>
+    <div class="r"><b>Google Apps Script</b><span>Web App collegata al foglio: riceve i form, valida, scrive, invia le email. Quota gratuita ampiamente sufficiente per ~100 partner.</span></div>
+    <div class="r"><b>Casella events@</b><span>Mittente delle email. Se il dominio è su Microsoft 365, Apps Script spedisce via Microsoft Graph (modalità <code>graph</code>); se è su Google Workspace, si usa direttamente <code>MailApp</code>.</span></div>
+    <div class="r"><b>GitHub Pages</b><span>Ospita la landing e l'area riservata. Nessun costo, nessun server.</span></div>
+  </div>
+
+  <h2>2. Setup passo per passo</h2>
+  <ol>
+    <li>Creare il Google Sheet in un <b>Drive condiviso MET</b> (non nel Drive personale di una persona), con accesso alle sole organizzatrici e all'IT.</li>
+    <li>Estensioni → Apps Script: incollare <code>apps-script/Codice.gs</code>, salvare, eseguire una volta <code>setupFogli()</code> per creare le intestazioni.</li>
+    <li>Impostazioni progetto → Proprietà script: inserire <code>API_TOKEN</code> (stringa casuale lunga), <code>MAIL_MODE</code> (<code>graph</code> o <code>mailapp</code>), <code>FROM_ADDRESS</code>, <code>SITE_URL</code> e, in modalità graph, <code>GRAPH_TENANT</code>, <code>GRAPH_CLIENT_ID</code>, <code>GRAPH_SECRET</code>.</li>
+    <li>Distribuisci → Nuova distribuzione → Applicazione web. «Esegui come: me», «Accesso: chiunque» (l'autorizzazione la fa il token, non Google).</li>
+    <li>Copiare l'URL <code>/exec</code> e configurarlo nella landing come endpoint delle chiamate.</li>
+    <li>Eseguire <code>testInvio()</code> per autorizzare lo script e verificare l'arrivo dell'email.</li>
+  </ol>
+  <p style="color:#4a6a76;margin-top:10px;font-size:12.5px">Ogni modifica al codice richiede una <b>nuova versione della distribuzione</b>, altrimenti la Web App continua a servire quella precedente.</p>
+
+  <h2>3. Mittente: come far partire la mail da events@metenergiaitalia.it</h2>
+  <div class="box">
+    <div class="r"><b>Dominio su Microsoft 365</b><span>Modalità <code>graph</code>: registrazione app in Entra ID, permesso applicativo <code>Mail.Send</code>, <b>Application Access Policy</b> che limita l'app alla sola casella events@. Apps Script chiede il token e chiama <code>sendMail</code>. SPF/DKIM del tenant già validi, copia in «Posta inviata», risposte nella casella events@.</span></div>
+    <div class="r"><b>Dominio su Google Workspace</b><span>Modalità <code>mailapp</code>: lo script deve girare con l'account che possiede l'indirizzo (o con un alias «Invia come» verificato). Zero configurazione aggiuntiva.</span></div>
+    <div class="r"><b>Da non fare</b><span>Spedire da un indirizzo @gmail.com o da un dominio diverso: le mail finiscono in spam e la comunicazione perde credibilità verso la rete di agenzie.</span></div>
+  </div>
+  <p style="color:#4a6a76;margin-top:10px;font-size:12.5px">Prima dell'invio massivo: verificare SPF, abilitare DKIM e pubblicare DMARC sul dominio (dettagli nella guida «Email di conferma»).</p>
+
+  <h2>4. Cosa vedono le organizzatrici</h2>
+  <ul>
+    <li><b>Il foglio Google</b> è già una vista completa: ogni riga è una risposta, con filtri e ordinamenti nativi. Nessuna app da installare.</li>
+    <li><b>L'area riservata</b> (<code>admin.html</code>) legge gli stessi dati dall'endpoint <code>GET</code> con token e li mostra in dashboard, tabella partecipanti e richieste partner.</li>
+    <li><b>Colonne del documento</b>: presenti solo nel foglio, mai restituite dall'endpoint pubblico e mai inviate per email.</li>
+    <li><b>Notifica in tempo reale</b> (opzionale, gratis): in Apps Script un trigger che avvisa events@ a ogni nuova registrazione, oppure la notifica nativa del foglio «Notifiche via email → quando qualcuno effettua modifiche».</li>
+  </ul>
+
+  <h2>5. Accesso e permessi</h2>
+  <ul>
+    <li>Il foglio va condiviso solo con le organizzatrici autorizzate e l'IT: la condivisione Google <b>è</b> il controllo accessi, quindi niente link «a chiunque abbia il link».</li>
+    <li>Il login mostrato in <code>admin.html</code> è un mockout: l'accesso reale è l'account Google. Per proteggere anche la pagina, ospitarla dietro autenticazione (Apps Script Web App con accesso limitato al dominio MET) invece che su Pages pubblico.</li>
+    <li><code>API_TOKEN</code> non va nel repository pubblico: se la landing è pubblica, il token per la sola scrittura resta comunque visibile nel front-end — per questo l'endpoint accetta esclusivamente le tre azioni previste e non restituisce mai i dati del documento.</li>
+    <li>Il token di <b>lettura</b> usato dall'area riservata deve essere diverso e non finire nel front-end pubblico.</li>
+  </ul>
+
+  <h2>6. Limiti e cosa sapere prima</h2>
+  <ul>
+    <li>Quote Apps Script: numero massimo di email al giorno e di chiamate esterne (diverse tra account consumer e Workspace). Da verificare al momento del setup: per ~100 partner sono ampiamente sufficienti.</li>
+    <li>Google Sheets non è un database trans­azionale: lo script usa un <code>LockService</code> per evitare scritture sovrapposte. Va bene fino a qualche migliaio di righe.</li>
+    <li>Nessuna statistica di consegna (aperture, click, bounce): per averle serve un servizio transazionale, anche in piano gratuito.</li>
+    <li>Backup: attivare la cronologia versioni del foglio ed esportare periodicamente una copia.</li>
+  </ul>
+
+  <h2>7. Privacy — da chiudere prima di andare online</h2>
+  <ul>
+    <li>Il foglio contiene dati personali e i dati del documento di identità: definire con <b>Privacy/Legal MET</b> base giuridica, informativa, tempi di conservazione e cancellazione post-evento.</li>
+    <li>Verificare l'ammissibilità dell'uso di Google Workspace/Drive per questi dati secondo le policy MET e i trasferimenti extra-UE.</li>
+    <li>Verificare con Villa Quaranta quali dati sono davvero necessari al check-in: chiedere solo quelli.</li>
+    <li>Limitare la condivisione del foglio, disattivare il download per chi non serve, tenere un log delle visualizzazioni dei dati sensibili (già previsto nel foglio <code>Log</code>).</li>
+    <li>Non inviare mai i dati del documento per email né allegarli a export condivisi fuori dal canale concordato.</li>
+  </ul>
+
+  <h2>8. Checklist</h2>
+  <ol>
+    <li>Foglio creato in Drive condiviso MET, accesso ristretto.</li>
+    <li><code>Codice.gs</code> incollato, <code>setupFogli()</code> eseguita.</li>
+    <li>Proprietà script configurate; nessun segreto nel repository.</li>
+    <li>Modalità mittente scelta e testata (graph o mailapp).</li>
+    <li>SPF verificato, DKIM attivo, DMARC pubblicato.</li>
+    <li>Web App distribuita; URL inserito nella landing.</li>
+    <li>Test completo: registrazione, duplicato, risposta negativa, richiesta partner, arrivo email su Gmail e Outlook.</li>
+    <li>Area riservata collegata in lettura con token dedicato.</li>
+    <li>Via libera Privacy/Legal MET.</li>
+  </ol>
+
+  <div style="background:rgba(244,196,0,.11);border:1px solid rgba(244,196,0,.4);border-radius:14px;padding:16px 18px;margin-top:24px;font-size:13px;color:#6f5300;break-inside:avoid">
+    <b style="display:block;margin-bottom:6px;color:#0b2b36">Le tre risposte che servono per partire</b>
+    1. Il dominio metenergiaitalia.it è su Microsoft 365 o Google Workspace? · 2. Chi possiede il Drive condiviso e il progetto Apps Script? · 3. Privacy MET autorizza la conservazione dei dati del check-in su Google Sheets?
+  </div>
+</doc-page>
+
+</body>
+</html>

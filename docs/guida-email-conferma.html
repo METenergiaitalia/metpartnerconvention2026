@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MET UP! 2026 — Guida IT: invio automatico dell'email di conferma</title>
+<style>
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:400;font-display:swap;src:url(../assets/fonts/montserrat-400.woff2) format("woff2")}
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:600;font-display:swap;src:url(../assets/fonts/montserrat-600.woff2) format("woff2")}
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:700;font-display:swap;src:url(../assets/fonts/montserrat-700.woff2) format("woff2")}
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:800;font-display:swap;src:url(../assets/fonts/montserrat-800.woff2) format("woff2")}
+body{margin:0;font-family:"Montserrat","Helvetica Neue",Arial,sans-serif;color:#0b2b36}
+doc-page:not(:defined){visibility:hidden}
+</style>
+<script src="../js/doc-page.js"></script>
+</head>
+<body>
+<doc-page margin="0.85in">
+  <div slot="header" style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding-bottom:8px;border-bottom:1px solid #e2ecf0;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#4a6a76">
+    <span>MET UP! 2026 · Guida IT — email di conferma</span>
+    <span>Uso interno · MET Energia Italia</span>
+  </div>
+  <div slot="footer" style="padding-top:8px;border-top:1px solid #e2ecf0;font-size:9.5px;color:#4a6a76">
+    Team Marketing MET Energia Italia · events@metenergiaitalia.it
+  </div>
+
+  <div style="background:url(../assets/img/met-logo-primary.png) no-repeat left center/contain;width:80px;height:56px;margin-bottom:20px"></div>
+  <div style="font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#0095b4">Documento per IT interno</div>
+  <h1 style="font-size:31px;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin:10px 0 0">Invio automatico dell'email di conferma<br />da events@metenergiaitalia.it</h1>
+  <p style="font-size:14px;color:#4a6a76;margin:14px 0 0;max-width:62ch">MET UP! – MET Partner Convention 2026 · 14–15 ottobre 2026 · Villa Quaranta, Valpolicella. Obiettivo: quando un partner completa la registrazione sulla landing (dati anagrafici + dati per il check-in), il sistema invia automaticamente l'email di conferma. <b style="color:#0b2b36">Senza costi aggiuntivi</b>, usando strumenti già in licenza MET o piani gratuiti.</p>
+
+  <div style="background:#f2f8fa;border:1px solid #e2ecf0;border-radius:14px;padding:16px 18px;margin-top:22px;font-size:13px;break-inside:avoid">
+    <b style="display:block;margin-bottom:6px">In sintesi</b>
+    Una pagina statica non può inviare email: la chiave di invio sarebbe leggibile da chiunque. Serve un piccolo endpoint server (una funzione, non un server da gestire) che riceva il form, salvi il dato e spedisca la mail. L'opzione a costo zero consigliata è <b>Microsoft Graph con la casella events@ già esistente</b>, ospitata su una funzione in piano gratuito.
+  </div>
+
+  <h2 style="font-size:18px;font-weight:800;letter-spacing:-.02em;margin:30px 0 8px;color:#005870">1. Il flusso da realizzare</h2>
+  <ol style="font-size:13.5px;color:#0b2b36;padding-left:20px;margin:0;line-height:1.65">
+    <li>Il partner compila il form RSVP sulla landing e invia.</li>
+    <li>Il browser chiama <code>POST /api/registrazioni</code> (HTTPS) con i dati del form.</li>
+    <li>La funzione valida i dati, verifica che l'email non sia già registrata, salva il record.</li>
+    <li>La funzione invia l'email di conferma <b>da events@metenergiaitalia.it</b> (template già pronto: <code>email/email-conferma.html</code>).</li>
+    <li>Risponde <code>200</code>; la landing mostra la schermata «Ci vediamo a MET UP!».</li>
+    <li>In caso di errore di invio, il record resta salvato e il backend segna «Email conferma: Errore» (già previsto nella tabella partecipanti).</li>
+  </ol>
+  <p style="font-size:12.5px;color:#4a6a76;margin-top:10px">I dati del documento di identità non vengono mai inseriti nel corpo dell'email né inviati alle organizzatrici: restano nel database protetto.</p>
+
+  <h2 style="font-size:18px;font-weight:800;letter-spacing:-.02em;margin:28px 0 8px;color:#005870">2. Opzione A — consigliata: Microsoft Graph (costo zero)</h2>
+  <p style="font-size:13.5px;margin:0 0 10px">Se <code>events@metenergiaitalia.it</code> è una casella Microsoft 365 (anche condivisa), l'invio si fa con l'API Graph già compresa nella licenza: nessun servizio nuovo, nessun canone.</p>
+  <div style="border:1px solid #e2ecf0;border-radius:14px;overflow:hidden;font-size:13px;break-inside:avoid">
+    <div style="display:grid;grid-template-columns:150px 1fr;gap:12px;padding:11px 14px;border-bottom:1px solid #e2ecf0"><b>Registrazione app</b><span>Entra ID → App registrations → nuova app «MET UP 2026 mailer», client secret con scadenza tracciata.</span></div>
+    <div style="display:grid;grid-template-columns:150px 1fr;gap:12px;padding:11px 14px;border-bottom:1px solid #e2ecf0"><b>Permesso</b><span>Application permission <code>Mail.Send</code> (Graph), con consenso amministratore.</span></div>
+    <div style="display:grid;grid-template-columns:150px 1fr;gap:12px;padding:11px 14px;border-bottom:1px solid #e2ecf0"><b>Restrizione</b><span><b>Application Access Policy</b> in Exchange Online per limitare l'app alla sola casella events@ — senza questa policy l'app potrebbe spedire da qualsiasi casella del tenant.</span></div>
+    <div style="display:grid;grid-template-columns:150px 1fr;gap:12px;padding:11px 14px;border-bottom:1px solid #e2ecf0"><b>Chiamata</b><span><code>POST /v1.0/users/events@metenergiaitalia.it/sendMail</code> con token client-credentials.</span></div>
+    <div style="display:grid;grid-template-columns:150px 1fr;gap:12px;padding:11px 14px"><b>Vantaggi</b><span>Mittente autenticato nativamente (SPF/DKIM del tenant già validi), copia in «Posta inviata», risposte dei partner nella casella events@ come sempre.</span></div>
+  </div>
+  <p style="font-size:12.5px;color:#4a6a76;margin-top:10px">Limite da conoscere: Exchange Online applica un tetto di destinatari al giorno per casella (ordine di alcune migliaia). Per ~100 partner è ampiamente sufficiente, sia per la conferma sia per le comunicazioni dal backend.</p>
+
+  <h2 style="font-size:18px;font-weight:800;letter-spacing:-.02em;margin:28px 0 8px;color:#005870">3. Opzione B — SMTP autenticato Microsoft 365</h2>
+  <p style="font-size:13.5px;margin:0">Stessa casella, invio via <code>smtp.office365.com:587</code> (STARTTLS) con un account dedicato. Più semplice da scrivere, ma richiede SMTP AUTH abilitato sull'account (spesso disattivato dalle baseline di sicurezza) e password/app password da custodire. Da valutare solo se Graph non è praticabile.</p>
+
+  <h2 style="font-size:18px;font-weight:800;letter-spacing:-.02em;margin:28px 0 8px;color:#005870">4. Opzione C — servizio transazionale in piano gratuito</h2>
+  <p style="font-size:13.5px;margin:0 0 8px">Servizi come Resend, Brevo, MailerSend o Amazon SES hanno piani gratuiti largamente sufficienti a questi volumi (verificare le soglie correnti al momento della scelta). Danno in più le statistiche che nel backend oggi sono simulate: consegnate, bounce, aperture, click.</p>
+  <p style="font-size:13.5px;margin:0">Richiedono però di <b>autenticare il dominio</b> presso il servizio (record DNS, punto 5) per poter spedire come <code>events@metenergiaitalia.it</code>. Il mittente resta lo stesso, le risposte continuano ad arrivare nella casella M365 impostando <code>Reply-To: events@metenergiaitalia.it</code>.</p>
+
+  <h2 style="font-size:18px;font-weight:800;letter-spacing:-.02em;margin:28px 0 8px;color:#005870">5. DNS: recapito e reputazione</h2>
+  <div style="border:1px solid #e2ecf0;border-radius:14px;overflow:hidden;font-size:13px;break-inside:avoid">
+    <div style="display:grid;grid-template-columns:90px 1fr;gap:12px;padding:11px 14px;border-bottom:1px solid #e2ecf0"><b>SPF</b><span>Un solo record TXT per il dominio. Con Graph/M365 basta <code>include:spf.protection.outlook.com</code>; con l'opzione C aggiungere l'include del servizio. Mai due record SPF.</span></div>
+    <div style="display:grid;grid-template-columns:90px 1fr;gap:12px;padding:11px 14px;border-bottom:1px solid #e2ecf0"><b>DKIM</b><span>Con M365: abilitare la firma DKIM per il dominio (due CNAME <code>selector1/2</code>). Con l'opzione C: i record forniti dal servizio.</span></div>
+    <div style="display:grid;grid-template-columns:90px 1fr;gap:12px;padding:11px 14px"><b>DMARC</b><span><code>_dmarc</code> TXT, partire da <code>p=none; rua=mailto:…</code> per leggere i report, poi irrigidire.</span></div>
+  </div>
+  <p style="font-size:12.5px;color:#4a6a76;margin-top:10px">Se il dominio è già in uso per la posta aziendale, SPF e DKIM esistono: l'attività è di verifica, non di creazione. Da controllare prima dell'invio massivo del Save the Date.</p>
+
+  <h2 style="font-size:18px;font-weight:800;letter-spacing:-.02em;margin:28px 0 8px;color:#005870">6. Dove ospitare la funzione (senza costi)</h2>
+  <ul style="font-size:13.5px;padding-left:20px;margin:0;line-height:1.65">
+    <li><b>Azure Functions</b> (piano consumo, quota mensile gratuita): coerente con il tenant M365, identità gestita al posto del client secret.</li>
+    <li><b>Cloudflare Workers</b> o <b>Netlify/Vercel Functions</b>: piani gratuiti, deploy diretto dal repository GitHub.</li>
+    <li>La landing statica può restare su GitHub Pages e chiamare la funzione via HTTPS, con CORS limitato al dominio dell'evento.</li>
+  </ul>
+
+  <h2 style="font-size:18px;font-weight:800;letter-spacing:-.02em;margin:28px 0 8px;color:#005870">7. Sicurezza — requisiti non negoziabili</h2>
+  <ul style="font-size:13.5px;padding-left:20px;margin:0;line-height:1.65">
+    <li>Nessuna credenziale, token o API key nel front-end: solo variabili d'ambiente lato funzione.</li>
+    <li>HTTPS obbligatorio; CORS limitato al dominio della landing.</li>
+    <li>Rate limiting e anti-spam sull'endpoint (es. limite per IP + honeypot o captcha invisibile).</li>
+    <li>Database ad accesso ristretto, backup, cifratura a riposo; dati del documento consultabili solo dai ruoli autorizzati e con log di ogni visualizzazione.</li>
+    <li>Nessun dato del documento nelle email, negli export inviati per posta o nei log applicativi.</li>
+    <li>Retention: definire con Privacy MET quando cancellare i dati del check-in dopo l'evento.</li>
+  </ul>
+
+  <h2 style="font-size:18px;font-weight:800;letter-spacing:-.02em;margin:28px 0 8px;color:#005870">8. Checklist operativa</h2>
+  <ol style="font-size:13.5px;padding-left:20px;margin:0;line-height:1.7">
+    <li>Confermare che events@metenergiaitalia.it è una casella M365 (e di che tipo).</li>
+    <li>Scegliere l'opzione: A (Graph, consigliata), B (SMTP) o C (servizio transazionale).</li>
+    <li>Creare la registrazione app + Application Access Policy sulla sola casella events@.</li>
+    <li>Verificare SPF, abilitare DKIM, pubblicare DMARC.</li>
+    <li>Deploy della funzione con i tre endpoint: registrazioni, richieste, comunicazioni.</li>
+    <li>Collegare il database e l'autenticazione delle organizzatrici.</li>
+    <li>Test: invio a caselle interne + almeno una esterna (Gmail, Outlook.com), controllo su smartphone, verifica di SPF/DKIM/DMARC negli header ricevuti.</li>
+    <li>Test del caso «email duplicata» e del caso «invio fallito».</li>
+    <li>Via libera Privacy/Legal MET su informativa, dati raccolti allo step 2 e retention.</li>
+  </ol>
+
+  <div style="background:rgba(244,196,0,.11);border:1px solid rgba(244,196,0,.4);border-radius:14px;padding:16px 18px;margin-top:24px;font-size:13px;color:#6f5300;break-inside:avoid">
+    <b style="display:block;margin-bottom:6px;color:#0b2b36">Da decidere prima di sviluppare</b>
+    Tipo di casella events@ · opzione di invio scelta · dove gira la funzione · quale database · chi mantiene il client secret e con quale scadenza · tempi di conservazione dei dati del check-in.
+  </div>
+</doc-page>
+
+</body>
+</html>

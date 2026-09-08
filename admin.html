@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Area riservata · MET UP! 2026 — Team Marketing MET Energia Italia</title>
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#00242f" />
+<style>
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/montserrat-400.woff2) format("woff2")}
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:600;font-display:swap;src:url(assets/fonts/montserrat-600.woff2) format("woff2")}
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:700;font-display:swap;src:url(assets/fonts/montserrat-700.woff2) format("woff2")}
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:800;font-display:swap;src:url(assets/fonts/montserrat-800.woff2) format("woff2")}
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:900;font-display:swap;src:url(assets/fonts/montserrat-900.woff2) format("woff2")}
+:root{
+  --deep:#003242; --deep-2:#00242f; --primary:#005870; --blue:#0095b4;
+  --sky:#88d2e7; --teal:#46c3b2; --green:#6bc04b; --yellow:#F4c400;
+  --grey:#63656A; --purple:#a45b96;
+  --ink:#0b2b36; --ink-soft:#5c7a86; --line:#e4edf1; --bg:#f4f8fa;
+  --ok:#2f8f4e; --warn:#b07d00; --bad:#c0392b;
+  --ff:"Montserrat","Helvetica Neue",Arial,sans-serif;
+  --sh:0 2px 10px rgba(0,50,66,.06); --sh-l:0 24px 60px rgba(0,50,66,.2);
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font-family:var(--ff);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.55}
+h1,h2,h3,h4{margin:0;letter-spacing:-.02em;line-height:1.2}
+a{color:inherit;text-decoration:none}
+a:hover{color:var(--blue)}
+button,input,select,textarea{font-family:inherit;font-size:14px}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.met-logo{background:url(assets/img/met-logo-white.png) no-repeat left center/contain}
+
+.login{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:22px;
+  background:linear-gradient(160deg,#00242f,#003a4c 55%,#00566e)}
+.login::before{content:"";position:absolute;inset:0;
+  background-image:radial-gradient(rgba(136,210,231,.13) 1.3px,transparent 1.3px);background-size:22px 22px}
+.login__box{position:relative;background:#fff;border-radius:28px;padding:34px 28px;width:100%;max-width:430px;box-shadow:var(--sh-l)}
+.login__logo{width:86px;height:60px;background:url(assets/img/met-logo-primary.png) no-repeat left center/contain;margin-bottom:22px}
+.login__t{font-size:24px;font-weight:800}
+.login__s{color:var(--ink-soft);font-size:13.5px;margin:8px 0 24px}
+.login__demo{margin-top:18px;padding:13px 15px;border-radius:12px;background:rgba(244,196,0,.11);
+  border:1px solid rgba(244,196,0,.4);font-size:12.5px;color:#7a5c00}
+
+.app{display:none;min-height:100vh}
+.app.is-on{display:block}
+.side{position:fixed;left:0;top:0;bottom:0;width:250px;background:var(--deep-2);color:#fff;
+  padding:22px 16px;display:flex;flex-direction:column;gap:6px;z-index:40;
+  transform:translateX(-100%);transition:transform .3s}
+.side.is-open{transform:none}
+.side__logo{width:76px;height:54px;margin:0 6px 6px}
+.side__ev{margin:0 6px 20px;font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--sky)}
+.side a{display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:11px;
+  font-size:13.5px;font-weight:600;color:rgba(255,255,255,.76);transition:background .18s,color .18s}
+.side a:hover{background:rgba(255,255,255,.08);color:#fff}
+.side a.is-on{background:var(--primary);color:#fff}
+.side a .b{margin-left:auto;background:var(--green);color:#04240f;font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:100px}
+.side__u{margin-top:auto;padding:13px 12px;border-top:1px solid rgba(255,255,255,.12);font-size:12.5px;color:rgba(255,255,255,.62)}
+.side__u b{display:block;color:#fff;font-size:13.5px}
+.main{padding:0 0 60px;transition:padding .3s}
+.top{position:sticky;top:0;z-index:30;background:rgba(244,248,250,.92);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);padding:14px 20px;display:flex;align-items:center;gap:14px}
+.top h1{font-size:19px;font-weight:800;flex:1;min-width:0}
+.top__sub{display:block;font-size:12px;font-weight:500;color:var(--ink-soft);letter-spacing:0}
+.hb{width:40px;height:40px;border-radius:11px;border:1px solid var(--line);background:#fff;
+  display:grid;place-items:center;gap:4px;cursor:pointer;align-content:center;flex:0 0 auto}
+.hb i{display:block;width:17px;height:2px;background:var(--primary);border-radius:2px}
+.pad{padding:22px 20px}
+.view{display:none}.view.is-on{display:block}
+
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(2,1fr)}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--sh)}
+.kpi__l{font-size:11px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-soft)}
+.kpi__v{font-size:34px;font-weight:900;letter-spacing:-.04em;margin-top:7px;line-height:1}
+.kpi__v.g{color:var(--ok)}.kpi__v.b{color:var(--bad)}.kpi__v.w{color:var(--warn)}
+.kpi__n{font-size:12px;color:var(--ink-soft);margin-top:5px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh);overflow:hidden}
+.card__h{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.card__h h2{font-size:15.5px;font-weight:800;flex:1;min-width:150px}
+.card__b{padding:18px}
+.qa{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.qa button{display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:15px;
+  border-radius:14px;border:1px solid var(--line);background:#fff;cursor:pointer;text-align:left;
+  transition:border-color .2s,transform .2s,box-shadow .2s}
+.qa button:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:var(--sh)}
+.qa b{font-size:13px;font-weight:800;letter-spacing:.02em}
+.qa span{font-size:11.5px;color:var(--ink-soft);line-height:1.35}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;cursor:pointer;
+  font-weight:700;font-size:12.5px;letter-spacing:.05em;padding:12px 18px;border-radius:100px;
+  transition:transform .2s,box-shadow .2s,background .2s}
+.btn:hover{transform:translateY(-1px)}
+.btn--p{background:linear-gradient(135deg,#005870,#6bc04b);color:#fff;box-shadow:0 6px 16px rgba(0,88,112,.28)}
+.btn--p:hover{color:#fff}
+.btn--s{background:var(--primary);color:#fff}
+.btn--s:hover{color:#fff}
+.btn--o{background:#fff;color:var(--primary);box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn--o:hover{box-shadow:inset 0 0 0 1.5px var(--primary);color:var(--primary)}
+.btn--d{background:#fff;color:var(--bad);box-shadow:inset 0 0 0 1.5px rgba(192,57,43,.3)}
+.btn--xs{padding:8px 13px;font-size:11.5px}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+.tools{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.inp{padding:11px 13px;border:1.5px solid var(--line);border-radius:11px;background:#fff;min-width:0}
+.inp:focus{outline:0;border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,149,180,.12)}
+textarea.inp{width:100%;min-height:96px;resize:vertical}
+select.inp{cursor:pointer}
+label.lb{display:block;font-size:12px;font-weight:700;margin:0 0 6px}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;min-width:860px}
+#t-recent{min-width:480px}
+#t-acc{min-width:640px}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap;font-size:13px}
+th{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);
+  background:#fafcfd;position:sticky;top:0;cursor:pointer;user-select:none}
+th:hover{color:var(--primary)}
+tbody tr{cursor:pointer;transition:background .15s}
+tbody tr:hover{background:#f7fbfc}
+td b{font-weight:700}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.05em;
+  padding:5px 10px;border-radius:100px;text-transform:uppercase}
+.pill--ok{background:rgba(47,143,78,.12);color:#1f6b39}
+.pill--no{background:rgba(99,101,106,.13);color:#4c4e52}
+.pill--w{background:rgba(244,196,0,.18);color:#7a5c00}
+.pill--b{background:rgba(192,57,43,.11);color:#a3291b}
+.pill--i{background:rgba(0,149,180,.13);color:#046179}
+.dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+.empty{padding:34px 18px;text-align:center;color:var(--ink-soft);font-size:13.5px}
+
+.dw{position:fixed;inset:0;z-index:50;display:none}
+.dw.is-on{display:block}
+.dw__bg{position:absolute;inset:0;background:rgba(0,25,33,.55)}
+.dw__p{position:absolute;right:0;top:0;bottom:0;width:100%;max-width:520px;background:#fff;
+  overflow-y:auto;box-shadow:var(--sh-l);animation:sl .3s ease both}
+@keyframes sl{from{transform:translateX(30px);opacity:.5}to{transform:none;opacity:1}}
+.dw__h{padding:22px 22px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:2}
+.dw__h h3{font-size:21px;font-weight:800}
+.dw__h p{margin:6px 0 0;font-size:13px;color:var(--ink-soft)}
+.dw__x{position:absolute;right:16px;top:16px;width:36px;height:36px;border-radius:50%;border:0;
+  background:var(--bg);cursor:pointer;font-size:16px;color:var(--ink-soft)}
+.dw__b{padding:20px 22px 40px}
+.dl{display:grid;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:18px}
+.dl__r{display:grid;grid-template-columns:132px 1fr;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line);
+  font-size:13px;align-items:center}
+.dl__r:last-child{border-bottom:0}
+.dl__r span{color:var(--ink-soft);font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.dl__r b{font-weight:700;word-break:break-word}
+.sect{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--primary);
+  margin:22px 0 10px;display:flex;align-items:center;gap:9px}
+.sect::after{content:"";flex:1;height:1px;background:var(--line)}
+.prot{background:rgba(0,88,112,.05);border:1px solid rgba(0,88,112,.2)}
+.prot .warn{font-size:11.5px;color:var(--primary);padding:10px 14px;background:rgba(0,88,112,.07);
+  font-weight:600;display:flex;gap:8px;align-items:flex-start;line-height:1.45}
+.mask{font-variant-numeric:tabular-nums;letter-spacing:.06em}
+
+.acc{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:12px;background:#fff}
+.acc__h{width:100%;border:0;background:#fff;padding:15px 17px;display:flex;align-items:center;gap:12px;
+  cursor:pointer;text-align:left;font-weight:700;font-size:14px}
+.acc__h .st{margin-left:auto}
+.acc__b{display:none;padding:4px 17px 18px;border-top:1px solid var(--line)}
+.acc.is-on .acc__b{display:block}
+.row{display:grid;gap:10px;grid-template-columns:96px 1fr;align-items:center;padding:9px 0;border-bottom:1px dashed var(--line)}
+.row:last-child{border-bottom:0}
+.row input.inp{padding:9px 11px}
+.save{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.saved{font-size:12.5px;font-weight:700;color:var(--ok);display:none;align-items:center;gap:7px}
+.saved.is-on{display:flex}
+
+.prev{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
+.prev__top{background:var(--deep-2);color:#fff;padding:16px 18px;font-size:12px}
+.prev__top b{display:block;font-size:14px}
+.prev__body{padding:22px 18px}
+.prev__h{font-size:19px;font-weight:800;margin-bottom:10px}
+.prev__cta{display:inline-block;background:linear-gradient(135deg,#005870,#6bc04b);color:#fff;
+  font-size:12px;font-weight:800;letter-spacing:.07em;padding:13px 22px;border-radius:100px;margin-top:16px}
+.rcp{display:flex;flex-wrap:wrap;gap:7px;max-height:150px;overflow-y:auto;padding:12px;border:1px solid var(--line);
+  border-radius:12px;background:#fafcfd}
+.tagx{font-size:11.5px;background:#fff;border:1px solid var(--line);border-radius:100px;padding:5px 10px;font-weight:600}
+.note{display:flex;gap:10px;align-items:flex-start;padding:13px 15px;border-radius:12px;font-size:12.5px;
+  line-height:1.5;margin-bottom:14px}
+.note--i{background:rgba(0,149,180,.09);border:1px solid rgba(0,149,180,.28);color:#04566b}
+.note--w{background:rgba(244,196,0,.11);border:1px solid rgba(244,196,0,.4);color:#7a5c00}
+.note--p{background:rgba(164,91,150,.09);border:1px solid rgba(164,91,150,.3);color:#7a3a6d}
+
+.md{position:fixed;inset:0;z-index:70;display:none;place-items:center;padding:18px}
+.md.is-on{display:grid}
+.md__bg{position:absolute;inset:0;background:rgba(0,25,33,.6)}
+.md__b{position:relative;background:#fff;border-radius:22px;padding:26px 24px;max-width:480px;width:100%;
+  box-shadow:var(--sh-l);max-height:86vh;overflow-y:auto}
+.md__b h3{font-size:20px;font-weight:800;margin-bottom:10px}
+.md__b p{font-size:13.5px;color:var(--ink-soft);margin:0 0 14px}
+.md__f{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.md__f .btn{flex:1;min-width:130px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,140%);z-index:80;background:var(--deep-2);
+  color:#fff;padding:14px 20px;border-radius:100px;font-size:13px;font-weight:600;box-shadow:var(--sh-l);
+  transition:transform .35s cubic-bezier(.3,.9,.3,1);max-width:92vw;text-align:center}
+.toast.is-on{transform:translate(-50%,0)}
+
+@media (min-width:700px){
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .qa{grid-template-columns:repeat(3,1fr)}
+  .pad{padding:26px}
+  .top{padding:16px 26px}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+}
+@media (min-width:1080px){
+  .side{transform:none}
+  .main{padding-left:250px}
+  .hb{display:none}
+  .kpis{grid-template-columns:repeat(6,1fr)}
+  .g2{grid-template-columns:1.05fr .95fr}
+  .pad{padding:28px 30px}
+  .top{padding:18px 30px}
+}
+</style>
+</head>
+<body>
+<div class="login" id="login">
+  <div class="login__box">
+    <div class="login__logo" role="img" aria-label="MET Energia Italia"></div>
+    <h1 class="login__t">Area riservata MET UP!</h1>
+    <p class="login__s">Accesso riservato alle organizzatrici autorizzate del Team Marketing MET Energia Italia.</p>
+    <div style="display:grid;gap:12px">
+      <div>
+        <label class="lb" for="lg-mail">Email aziendale</label>
+        <input class="inp" id="lg-mail" type="email" style="width:100%" value="marketing1@metenergiaitalia.it" />
+      </div>
+      <div>
+        <label class="lb" for="lg-pw">Password</label>
+        <input class="inp" id="lg-pw" type="password" style="width:100%" value="demo-prototipo" />
+      </div>
+      <div>
+        <label class="lb" for="lg-otp">Codice a 6 cifre (2FA)</label>
+        <input class="inp" id="lg-otp" type="text" inputmode="numeric" maxlength="6" style="width:100%" value="000000" />
+      </div>
+      <button class="btn btn--p" id="lg-go" style="width:100%;padding:15px">Accedi</button>
+    </div>
+    <div class="login__demo">
+      <b>Prototipo.</b> Nessuna autenticazione reale: i dati sono di esempio e vivono solo in questa pagina.
+      Nell'implementazione definitiva: account individuali per ciascuna organizzatrice, password policy MET,
+      2FA e log degli accessi.
+    </div>
+  </div>
+</div>
+
+<div class="app" id="app">
+  <aside class="side" id="side">
+    <div class="side__logo met-logo" role="img" aria-label="MET Energia Italia"></div>
+    <div class="side__ev">MET UP! · 2026</div>
+    <a href="#" data-v="dash" class="is-on">Dashboard</a>
+    <a href="#" data-v="part">Partecipanti</a>
+    <a href="#" data-v="cont">Contenuti sito</a>
+    <a href="#" data-v="com">Comunicazioni</a>
+    <a href="#" data-v="stor">Storico invii</a>
+    <a href="#" data-v="req">Richieste partner <span class="b" id="req-b">2</span></a>
+    <a href="#" data-v="exp">Export dati</a>
+    <a href="#" data-v="log">Log &amp; account</a>
+    <div class="side__u">
+      <b id="me-name">Organizzatrice 1</b>
+      <span id="me-role">Ruolo: Amministratrice</span><br />
+      <a href="#" id="logout" style="padding:8px 0;color:var(--sky);font-size:12.5px">Esci</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="top">
+      <button class="hb" id="hb" aria-label="Apri il menu"><i></i><i></i><i></i></button>
+      <h1 id="view-t">Dashboard<span class="top__sub" id="view-s">MET UP! – MET Partner Convention 2026 · 14–15 ottobre 2026</span></h1>
+      <a class="btn btn--o btn--xs" href="index.html" target="_blank" rel="noopener">Vedi il sito ↗</a>
+    </div>
+
+    <section class="view is-on pad" id="v-dash">
+      <div class="grid kpis" id="kpis"></div>
+      <div class="g2" style="margin-top:16px">
+        <div class="card">
+          <div class="card__h"><h2>Azioni rapide</h2></div>
+          <div class="card__b"><div class="qa" id="qa"></div></div>
+        </div>
+        <div style="display:grid;gap:14px">
+          <div class="card">
+            <div class="card__h"><h2>Ultima comunicazione inviata</h2></div>
+            <div class="card__b" id="last-com"></div>
+          </div>
+          <div class="card">
+            <div class="card__h"><h2>Ultime registrazioni</h2></div>
+            <div class="tw"><table id="t-recent"></table></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view pad" id="v-part">
+      <div class="card">
+        <div class="card__h">
+          <h2>Partecipanti</h2>
+          <div class="tools">
+            <input class="inp" id="p-q" type="search" aria-label="Cerca tra i partecipanti" placeholder="Cerca nome, agenzia, email…" style="min-width:190px" />
+            <select class="inp" id="p-f" aria-label="Filtra per stato" value="">
+              <option value="">Tutti gli stati</option>
+              <option value="CONFERMATO">Confermati</option>
+              <option value="NON PARTECIPA">Non partecipano</option>
+            </select>
+            <select class="inp" id="p-d" aria-label="Filtra per esigenze alimentari" value="">
+              <option value="">Tutte le esigenze</option>
+              <option value="1">Solo con allergie/intolleranze</option>
+            </select>
+            <button class="btn btn--o btn--xs" data-v="exp">Esporta</button>
+          </div>
+        </div>
+        <div class="tw"><table id="t-part"></table></div>
+        <div class="card__b" style="border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-soft)" id="p-count"></div>
+      </div>
+      <div class="note note--p" style="margin-top:14px">
+        <span>🔒</span>
+        <div><b>Dati del documento.</b> Non compaiono in questa tabella: sono visibili solo nella scheda del singolo partecipante, mascherati, e solo agli account con ruolo autorizzato. Ogni visualizzazione in chiaro viene registrata nel log amministrativo.</div>
+      </div>
+    </section>
+
+    <section class="view pad" id="v-cont">
+      <div class="note note--i">
+        <span>ℹ️</span>
+        <div>Tutto quello che vedi qui è modificabile senza toccare il codice. Dopo il salvataggio puoi decidere <b>se e quando</b> avvisare i partecipanti: nessuna email parte automaticamente.</div>
+      </div>
+      <div id="cont-acc"></div>
+      <div class="save">
+        <button class="btn btn--p" id="cont-save">Salva le modifiche</button>
+        <button class="btn btn--o" id="cont-notify">Notifica i partecipanti</button>
+        <span class="saved" id="cont-saved">✓ Modifiche salvate · sito aggiornato</span>
+      </div>
+    </section>
+
+    <section class="view pad" id="v-com">
+      <div class="g2">
+        <div class="card">
+          <div class="card__h"><h2>Nuova comunicazione</h2></div>
+          <div class="card__b" style="display:grid;gap:14px">
+            <div>
+              <label class="lb">Destinatari</label>
+              <select class="inp" id="c-dest" style="width:100%" aria-label="Destinatari della comunicazione" value="conf">
+                <option value="conf">Tutti i partecipanti confermati</option>
+                <option value="sel">Partecipanti selezionati manualmente</option>
+              </select>
+              <p style="font-size:12px;color:var(--ink-soft);margin:8px 0 0">Chi ha risposto «Non parteciperò» non viene mai incluso automaticamente.</p>
+            </div>
+            <div id="c-sel-box" style="display:none">
+              <label class="lb">Seleziona i destinatari</label>
+              <div class="rcp" id="c-sel-list"></div>
+            </div>
+            <div><label class="lb" for="c-ogg">Oggetto email</label>
+              <input class="inp" id="c-ogg" style="width:100%" value="MET UP! · Aggiornamento sul programma" /></div>
+            <div><label class="lb" for="c-tit">Titolo nel messaggio</label>
+              <input class="inp" id="c-tit" style="width:100%" value="Il programma di MET UP! è stato aggiornato" /></div>
+            <div><label class="lb" for="c-msg">Messaggio</label>
+              <textarea class="inp" id="c-msg">Ciao,
+abbiamo aggiornato il programma di MET UP! con i primi orari confermati delle due giornate a Villa Quaranta.
+Trovi tutti i dettagli nella pagina dedicata all'evento.</textarea></div>
+            <div class="note note--i" style="margin:0">
+              <span>✉️</span>
+              <div>Mittente: <b>MET Energia Italia Events</b> &lt;events@metenergiaitalia.it&gt; · CTA predefinita: <b>SCOPRI L'AGGIORNAMENTO</b> → landing MET UP!</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:grid;gap:14px">
+          <div class="card">
+            <div class="card__h"><h2>Anteprima</h2><span class="pill pill--i" id="c-n">0 destinatari</span></div>
+            <div class="card__b"><div class="prev" id="c-prev"></div></div>
+          </div>
+          <div class="card">
+            <div class="card__h"><h2>Invio</h2></div>
+            <div class="card__b">
+              <div class="note note--w" style="margin-bottom:14px">
+                <span>⚠️</span>
+                <div>Invia sempre prima una email di test a te stessa: controlla oggetto, mittente, link e resa su smartphone.</div>
+              </div>
+              <div class="tools">
+                <button class="btn btn--o" id="c-test">Invia email di test</button>
+                <button class="btn btn--p" id="c-send">Invia ai partecipanti</button>
+              </div>
+              <div id="c-rcp" style="margin-top:16px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view pad" id="v-stor">
+      <div class="card">
+        <div class="card__h"><h2>Comunicazioni inviate</h2></div>
+        <div class="tw"><table id="t-stor"></table></div>
+      </div>
+      <div class="note note--i" style="margin-top:14px">
+        <span>📊</span>
+        <div>Consegnate, bounce, aperture e click sono disponibili solo se il provider di invio (es. Microsoft 365 + servizio transazionale, SendGrid, Brevo, Resend) espone i relativi webhook. Da concordare con IT MET.</div>
+      </div>
+    </section>
+
+    <section class="view pad" id="v-req">
+      <div class="card">
+        <div class="card__h"><h2>Richieste partner</h2>
+          <div class="tools">
+            <select class="inp" id="r-f" aria-label="Filtra le richieste per stato" value="">
+              <option value="">Tutti gli stati</option>
+              <option value="Nuova">Nuove</option>
+              <option value="In gestione">In gestione</option>
+              <option value="Risolta">Risolte</option>
+            </select>
+          </div>
+        </div>
+        <div id="req-list"></div>
+      </div>
+    </section>
+
+    <section class="view pad" id="v-exp">
+      <div class="note note--p">
+        <span>🔒</span>
+        <div><b>Attenzione: dati personali.</b> L'export «Lista check-in hotel» contiene i dati dei documenti di identità. Scaricalo solo se necessario, non inviarlo per email, condividilo con la struttura tramite il canale concordato con Privacy/IT MET ed eliminalo dal tuo dispositivo dopo l'uso. Ogni download viene registrato nel log.</div>
+      </div>
+      <div class="grid" id="exp-list" style="margin-top:14px"></div>
+    </section>
+
+    <section class="view pad" id="v-log">
+      <div class="g2">
+        <div class="card">
+          <div class="card__h"><h2>Account autorizzati</h2></div>
+          <div class="tw"><table id="t-acc"></table></div>
+        </div>
+        <div class="card">
+          <div class="card__h"><h2>Log amministrativo</h2></div>
+          <div class="card__b" id="log-list" style="display:grid;gap:10px"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="dw" id="dw">
+  <div class="dw__bg" data-dwx="true"></div>
+  <div class="dw__p">
+    <div class="dw__h">
+      <button class="dw__x" data-dwx="true" aria-label="Chiudi">✕</button>
+      <h3 id="dw-t"></h3>
+      <p id="dw-s"></p>
+    </div>
+    <div class="dw__b" id="dw-b"></div>
+  </div>
+</div>
+
+<div class="md" id="md">
+  <div class="md__bg" data-mdx="true"></div>
+  <div class="md__b">
+    <h3 id="md-t"></h3>
+    <div id="md-b"></div>
+    <div class="md__f" id="md-f"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script type="module">
+import { initAdmin } from './js/metup-admin.js';
+initAdmin();
+</script>
+</body>
+</html>

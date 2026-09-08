@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MET UP! 2026 · Dossier tecnico</title>
+<style>
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:400;font-display:swap;src:url(../assets/fonts/montserrat-400.woff2) format("woff2")}
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:600;font-display:swap;src:url(../assets/fonts/montserrat-600.woff2) format("woff2")}
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:700;font-display:swap;src:url(../assets/fonts/montserrat-700.woff2) format("woff2")}
+@font-face{font-family:"Montserrat";font-style:normal;font-weight:800;font-display:swap;src:url(../assets/fonts/montserrat-800.woff2) format("woff2")}
+body{margin:0;font-family:"Montserrat","Helvetica Neue",Arial,sans-serif;color:#0b2b36}
+doc-page:not(:defined){visibility:hidden}
+h1{font-size:29px;font-weight:800;letter-spacing:-.03em;line-height:1.12;margin:0 0 12px}
+h2{font-size:18px;font-weight:800;letter-spacing:-.02em;color:#005870;margin:26px 0 8px;break-after:avoid}
+h3{font-size:15px;font-weight:800;margin:20px 0 6px;break-after:avoid}
+h4{font-size:13.5px;font-weight:800;margin:16px 0 5px}
+p,li,td,th{font-size:12.5px;line-height:1.6}
+ul,ol{padding-left:20px;margin:0 0 10px}
+li{margin-bottom:3px}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;background:#f2f8fa;padding:1px 5px;border-radius:5px}
+pre{background:#f2f8fa;border:1px solid #e2ecf0;border-radius:10px;padding:12px 14px;font-size:11px;overflow:hidden;white-space:pre-wrap;break-inside:avoid}
+blockquote{margin:14px 0;padding:13px 16px;background:#f2f8fa;border:1px solid #e2ecf0;border-radius:12px;font-size:12.5px;break-inside:avoid}
+table{width:100%;border-collapse:collapse;margin:12px 0;break-inside:auto}
+th,td{border:1px solid #e2ecf0;padding:7px 9px;text-align:left;vertical-align:top}
+th{background:#f2f8fa;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#4a6a76}
+tr{break-inside:avoid}
+hr{border:0;border-top:1px solid #e2ecf0;margin:20px 0}
+a{color:#005870}
+</style>
+<script src="../js/doc-page.js"></script>
+</head>
+<body>
+<doc-page margin="0.8in">
+  <div slot="header" style="display:flex;justify-content:space-between;gap:16px;padding-bottom:8px;border-bottom:1px solid #e2ecf0;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#4a6a76">
+    <span>MET UP! 2026 — Dossier tecnico</span><span>Uso interno · MET Energia Italia</span>
+  </div>
+  <div slot="footer" style="padding-top:8px;border-top:1px solid #e2ecf0;font-size:9px;color:#4a6a76">
+    Team Marketing MET Energia Italia · events@metenergiaitalia.it
+  </div>
+  <div style="background:url(../assets/img/met-logo-primary.png) no-repeat left center/contain;width:74px;height:52px;margin-bottom:18px"></div>
+<h1>MET UP! — Dossier tecnico e punti da verificare</h1>
+<p><b>MET Partner Convention 2026 · 14–15 ottobre 2026 · Villa Quaranta, Valpolicella (VR)</b> Documento a corredo del prototipo. Versione 1.1 — 21 agosto 2026.</p>
+<blockquote>Questo documento serve a due cose: (1) elencare tutto quello che deve essere deciso o verificato <b>prima</b> della messa online, (2) descrivere come va costruita la parte server, che il prototipo non può contenere.</blockquote>
+<hr />
+<h2>1. Cosa contiene il prototipo e cosa no</h2>
+<table><thead><tr><th></th><th>Stato</th></tr></thead><tbody><tr><td>Landing pubblica completa, mobile-first, brandizzata MET</td><td>✅ nel prototipo (<code>index.html</code>)</td></tr><tr><td>Flusso RSVP «Sì» a 5 step + flusso «No» + gestione duplicati + schermata di conferma</td><td>✅ nel prototipo (validazioni lato client)</td></tr><tr><td>Area riservata Team Marketing: dashboard, partecipanti, contenuti, comunicazioni, storico, richieste, export, log</td><td>✅ mockup navigabile (<code>admin.html</code>), dati finti in memoria</td></tr><tr><td>Template email di conferma e di aggiornamento</td><td>✅ HTML pronti (<code>email/</code>)</td></tr><tr><td>Modalità modifica (live editing): riscrittura dei testi in pagina, colori, sezioni, richieste di modifica per sezione ed export</td><td>✅ nel prototipo — <b>da rimuovere prima della pubblicazione</b></td></tr><tr><td>Salvataggio reale dei dati, invio reale delle email, autenticazione reale, ruoli, export dei file</td><td>❌ <b>richiedono la parte server</b> (§3–§5)</td></tr></tbody></table>
+<p>Nel prototipo i dati inseriti <b>non vengono salvati né inviati</b>: restano nella pagina e si azzerano al ricaricamento. È voluto — così il prototipo può circolare per l'approvazione senza raccogliere dati personali reali.</p>
+<hr />
+<h2>2. Pubblicazione su GitHub: il limite da conoscere subito</h2>
+<p>GitHub Pages serve <b>solo file statici</b>. Ospita perfettamente la landing, ma non può: salvare una registrazione, inviare una email, autenticare le organizzatrici, generare un export. Servono quindi due pezzi:</p>
+<ol>
+<li><b>Frontend statico</b> → GitHub Pages (o Vercel/Netlify collegati alla stessa repo).</li>
+<li><b>Backend + database</b> → un servizio separato, raggiunto via chiamate HTTPS dal frontend.</li>
+</ol>
+<p>Opzioni per il punto 2, in ordine di semplicità operativa:</p>
+<table><thead><tr><th>Opzione</th><th>Pro</th><th>Contro</th></tr></thead><tbody><tr><td><b>Vercel</b> (Next.js: pagina + API + auth nello stesso progetto) + <b>Postgres gestito</b> (Neon/Supabase)</td><td>un solo deploy, ambiente moderno, region UE selezionabile</td><td>esce dal perimetro IT MET: va approvato come fornitore</td></tr><tr><td><b>Netlify/Cloudflare Functions</b> + database gestito</td><td>frontend statico invariato, backend “a funzioni”</td><td>due servizi da governare</td></tr><tr><td><b>Hosting/VM interna MET</b> (Node o PHP) + Postgres/MySQL MET</td><td>dati dentro il perimetro MET, iter privacy più semplice</td><td>richiede tempo e presidio dell'IT</td></tr><tr><td><b>Piattaforma eventi esterna</b> per RSVP + landing statica su Pages</td><td>zero sviluppo backend</td><td>dati personali su terza parte, look&amp;feel e logiche del brief non replicabili</td></tr></tbody></table>
+<blockquote>⚠️ <b>Repository privata.</b> Anche senza dati, la repo contiene testi non ancora pubblici. Va tenuta <b>privata</b> fino al lancio; GitHub Pages su repo privata richiede un piano a pagamento (Pro/Team/Enterprise). Se non disponibile: sviluppo su repo privata e pubblicazione al lancio.</blockquote>
+<p><b>Da decidere con IT MET:</b> dominio pubblico della pagina — un sottodominio MET (es. <code>metup.metenergiaitalia.it</code>, che richiede un record DNS) è preferibile a un URL <code>github.io</code> sia per credibilità sia per la deliverability dei link nelle email.</p>
+<hr />
+<h2>3. Configurazione email — da fare lato MET/IT prima del lancio</h2>
+<p>Le email partono dall'indirizzo indicato nel brief:</p>
+<ul>
+<li><b>From name:</b> MET Energia Italia Events</li>
+<li><b>From:</b> <code>events@metenergiaitalia.it</code></li>
+<li><b>Reply-To:</b> <code>events@metenergiaitalia.it</code></li>
+</ul>
+<h3>3.1 Decisioni preliminari (IT MET)</h3>
+<ol>
+<li><b>La casella <code>events@metenergiaitalia.it</code> esiste già?</b> Se no, va creata (casella o</li>
+</ol>
+<p>   alias condiviso), perché le risposte dei partner arrivano lì e le organizzatrici    devono poterle leggere.</p>
+<ol>
+<li><b>Chi invia tecnicamente le email?</b> Due strade:</li>
+</ol>
+<ul>
+<li><b>SMTP autenticato</b> sul tenant di posta MET (es. Microsoft 365): nessun fornitore</li>
+</ul>
+<p>     nuovo, ma limiti di invio per casella (su M365 tipicamente ~10.000 destinatari/giorno      e 30 destinatari/messaggio, da verificare sul tenant) e nessuna statistica di      consegna/apertura. Per ~100 destinatari è sufficiente, purché si inviino messaggi      individuali e non un unico invio in copia.</p>
+<ul>
+<li><b>Servizio transazionale via API</b> (Resend, Brevo, SendGrid, Mailjet, Postmark…):</li>
+</ul>
+<p>     invio affidabile, webhook per consegne/bounce/aperture/click — che è ciò che      alimenta la colonna «Stato» dello storico invii. Richiede l'approvazione di un      fornitore e la delega di autenticazione sul dominio.</p>
+<ol>
+<li><b>Region dei dati:</b> se si scegli un servizio esterno, selezionare region UE e</li>
+</ol>
+<p>   verificare che il DPA/GDPR sia in essere.</p>
+<h3>3.2 Autenticazione del dominio (DNS)</h3>
+<p>Da verificare <b>e documentare</b> prima del primo invio. Il prototipo non può leggerli: vanno controllati con l'IT o con i comandi seguenti.</p>
+<pre>dig +short TXT metenergiaitalia.it            # SPF (record che inizia con v=spf1)
+dig +short TXT _dmarc.metenergiaitalia.it     # DMARC
+dig +short MX  metenergiaitalia.it            # provider di posta in uso
+# DKIM: il selettore dipende dal provider, es. Microsoft 365:
+dig +short CNAME selector1._domainkey.metenergiaitalia.it</pre>
+<p>Checklist:</p>
+<ul>
+<li>[ ] <b>SPF</b> — un solo record <code>v=spf1</code> sul dominio, che includa il servizio di invio</li>
+</ul>
+<p>      scelto. Attenzione al limite di 10 lookup DNS: non aggiungere <code>include:</code> a caso.</p>
+<ul>
+<li>[ ] <b>DKIM</b> — chiavi generate dal provider e pubblicate (di norma due CNAME o un TXT</li>
+</ul>
+<p>      con selettore dedicato). Firma con il dominio <code>metenergiaitalia.it</code>, non con il       dominio del fornitore, altrimenti l'allineamento DMARC fallisce.</p>
+<ul>
+<li>[ ] <b>DMARC</b> — record presente e allineato. Se oggi è <code>p=none</code>, va bene per partire;</li>
+</ul>
+<p>      valutare con IT il passaggio a <code>quarantine</code>. Impostare un indirizzo <code>rua=</code> per i report.</p>
+<ul>
+<li>[ ] <b>Return-Path / bounce</b> — dove tornano i messaggi non consegnati e chi li guarda.</li>
+<li>[ ] <b>Test pratico</b> prima del lancio: invio a caselle Gmail, Outlook/M365 e a un dominio</li>
+</ul>
+<p>      aziendale di un'agenzia partner; controllo header (<code>Authentication-Results</code>:       spf=pass, dkim=pass, dmarc=pass) e resa su smartphone.</p>
+<ul>
+<li>[ ] <b>Test anti-spam</b> (es. mail-tester.com) sul template reale, non su un testo di prova.</li>
+</ul>
+<h3>3.3 Regole non negoziabili nel codice</h3>
+<ul>
+<li>Nessuna credenziale, API key o stringa di connessione nel frontend o nella repo:</li>
+</ul>
+<p>  solo variabili d'ambiente sul server (<code>.env</code> fuori dal versionamento, secret del provider di hosting).</p>
+<ul>
+<li>Le immagini delle email (logo, lettering) devono stare su <b>URL assoluti ospitati</b>:</li>
+</ul>
+<p>  Gmail e Outlook bloccano i data-URI. Nei template i segnaposto sono <code>{{URL_LOGO}}</code> e <code>{{URL_BRINGING}}</code>.</p>
+<ul>
+<li><b>Nessun dato del documento di identità nelle email</b>, in nessun caso — nemmeno nelle</li>
+</ul>
+<p>  notifiche interne alle organizzatrici (§39 del brief).</p>
+<ul>
+<li>Coda di invio con retry: se un invio fallisce, lo stato del partecipante diventa</li>
+</ul>
+<p>  «Email conferma: Errore» e resta rinviabile dal backend (già previsto nel mockup).</p>
+<hr />
+<h2>4. Modello dati proposto</h2>
+<pre>partecipanti
+  id                    uuid, PK
+  stato                 enum('CONFERMATO','NON_PARTECIPA')
+  nome, cognome         text
+  agenzia               text
+  email                 citext UNIQUE   -- identificativo, gestione duplicati
+  -- dati check-in: solo per CONFERMATO, cifrati a riposo
+  nascita_data          date
+  nascita_luogo         text
+  residenza             text
+  doc_numero            text  (cifrato)
+  doc_luogo_emissione   text
+  doc_data_emissione    date
+  -- esigenze
+  esigenze_flag         boolean
+  esigenze_tipi         text[]          -- vegetariano, vegano, senza glutine, …
+  esigenze_note         text
+  note                  text
+  messaggio_no          text            -- solo per NON_PARTECIPA
+  privacy_accettata_at  timestamptz     -- prova del consenso
+  creato_at             timestamptz
+  aggiornato_at         timestamptz
+  email_conferma_stato  enum('inviata','errore','in_coda')
+  email_conferma_at     timestamptz
+  ip_registrazione      inet            -- solo se Privacy MET lo autorizza (anti-abuso)
+
+richieste            (form «Contatta il Team Marketing»)
+  id, creato_at, nome, cognome, agenzia, email, oggetto, messaggio,
+  stato enum('nuova','in_gestione','risolta'), assegnata_a, note_interne
+
+contenuti            (tutto ciò che le organizzatrici modificano)
+  chiave text PK, valore jsonb, aggiornato_da, aggiornato_at, pubblicato boolean
+  -- programma, info utili, faq, testi, immagini, aggiornamenti, alert
+
+comunicazioni
+  id, creato_at, inviata_at, autore, oggetto, titolo, messaggio, cta_label,
+  destinatari_tipo, destinatari_count, stato,
+  metriche jsonb   -- consegnate, bounce, aperture, click (se il provider li espone)
+
+utenti_admin
+  id, nome, email, password_hash, ruolo enum('amministratrice','editor'),
+  puo_vedere_documenti boolean, mfa_secret, ultimo_accesso_at, attivo
+
+log_admin
+  id, quando, utente_id, azione, oggetto_tipo, oggetto_id, dettaglio jsonb, ip
+  -- traccia obbligatoria per: visualizzazione dati documento, export,
+  --   modifica dati partecipante, invio comunicazioni, login/logout</pre>
+<p>Endpoint minimi:</p>
+<pre>POST /api/rsvp                  registrazione (Sì / No) → salvataggio + email
+GET  /api/content               contenuti pubblici della landing
+POST /api/richieste             form contatti → email a events@ + record
+--- protetti (sessione admin) ---
+GET/PATCH /api/partecipanti     elenco, scheda, correzione dati
+GET  /api/partecipanti/:id/documento   restituisce il dato in chiaro + scrive nel log
+POST /api/export                genera xlsx/csv (link a scadenza, mai allegato email)
+PUT  /api/content               salvataggio contenuti
+POST /api/comunicazioni/test    invio di prova all'organizzatrice
+POST /api/comunicazioni/invia   invio reale (conferma esplicita richiesta)
+GET  /api/log                   log amministrativo</pre>
+<hr />
+<h2>5. Sicurezza — requisiti implementativi</h2>
+<ul>
+<li><b>HTTPS</b> obbligatorio, HSTS attivo; nessuna pagina raggiungibile in HTTP.</li>
+<li><b>Autenticazione backend</b>: account individuali per ciascuna organizzatrice (mai</li>
+</ul>
+<p>  credenziali condivise), password policy MET, <b>2FA</b>, sessioni con scadenza,   blocco dopo N tentativi falliti.</p>
+<ul>
+<li><b>Ruoli</b>: <code>amministratrice</code> (tutto) / <code>editor</code> (contenuti e comunicazioni, senza</li>
+</ul>
+<p>  accesso ai dati del documento). Il flag «accesso dati documento» è per-utente.</p>
+<ul>
+<li><b>Cifratura a riposo</b> del numero di documento (colonna cifrata o cifratura</li>
+</ul>
+<p>  applicativa con chiave in secret manager); mai in chiaro nei log applicativi.</p>
+<ul>
+<li><b>Protezione form pubblici</b>: rate limiting per IP e per email, honeypot o captcha</li>
+</ul>
+<p>  privacy-friendly (es. Turnstile/hCaptcha — da approvare con Privacy), validazione   server-side di <b>tutti</b> i campi (quella del prototipo è solo lato client),   sanificazione dell'output per evitare XSS nei campi liberi (note, messaggi).</p>
+<ul>
+<li><b>Export</b>: generati on-demand, link firmato a scadenza breve, download tracciato nel</li>
+</ul>
+<p>  log, <b>nessun export inviato per email</b>.</p>
+<ul>
+<li><b>Backup</b> giornaliero del database con retention definita e prova di ripristino.</li>
+<li><b>Cancellazione</b>: procedura e data di cancellazione dei dati documento **subito dopo</li>
+</ul>
+<p>  l'evento** (vedi §6).</p>
+<ul>
+<li><b>Nessuna credenziale nel frontend</b> e nessun segreto committato: <code>.gitignore</code> su</li>
+</ul>
+<p>  <code>.env*</code>, scansione della repo prima di renderla pubblica.</p>
+<ul>
+<li><b>Dipendenze</b>: le sole terze parti caricate dalla landing sono l'embed di Google Maps</li>
+</ul>
+<p>  (§7) — font Montserrat e loghi sono self-hosted, quindi nessuna chiamata a   <code>fonts.gstatic.com</code>.</p>
+<hr />
+<h2>6. Privacy — punti da chiudere con Privacy/Legal MET</h2>
+<p>Il punto più delicato del progetto: si raccolgono <b>dati di documento di identità</b> di persone esterne all'azienda.</p>
+<ul>
+<li>[ ] <b>Minimizzazione (§15 del brief).</b> Verificare con Villa Quaranta *quali* dati</li>
+</ul>
+<p>      servono realmente per la comunicazione alloggiati/Questura. In genere bastano       nome, cognome, data e luogo di nascita, cittadinanza/residenza e tipo+numero del       documento; <b>luogo e data di emissione sono spesso non necessari</b>. Se non servono,       vanno eliminati dal form (basta modificare lo step 2).</p>
+<ul>
+<li>[ ] <b>Alternativa da valutare:</b> raccogliere i dati documento **direttamente al</li>
+</ul>
+<p>      check-in in hotel** anziché online. È l'opzione con il rischio più basso; il form       si ridurrebbe a nome, agenzia, email, esigenze alimentari e note.</p>
+<ul>
+<li>[ ] <b>Base giuridica</b> del trattamento per ciascuna finalità (organizzazione evento,</li>
+</ul>
+<p>      obblighi della struttura ricettiva, comunicazioni sull'evento).</p>
+<ul>
+<li>[ ] <b>Informativa privacy dedicata all'evento</b>, redatta da Privacy/Legal: finalità,</li>
+</ul>
+<p>      base giuridica, categorie di dati, destinatari (Villa Quaranta, provider email,       hosting), tempi di conservazione, diritti dell'interessato. Il link nel form e nel       footer oggi è un <b>segnaposto</b>: senza il testo definitivo non si pubblica.</p>
+<ul>
+<li>[ ] <b>Cookie policy / banner:</b> la pagina come è ora non usa cookie né analytics; con</li>
+</ul>
+<p>      Google Maps in iframe c'è comunque un trasferimento verso Google al caricamento →       valutare se serve il banner o se sostituire la mappa (§7). Se si aggiungono       analytics, il banner diventa obbligatorio.</p>
+<ul>
+<li>[ ] <b>Ruoli GDPR:</b> Villa Quaranta e i fornitori (hosting, servizio email) come</li>
+</ul>
+<p>      responsabili del trattamento → nomine ex art. 28 e DPA firmati.</p>
+<ul>
+<li>[ ] <b>Trasferimento a Villa Quaranta:</b> canale sicuro concordato (non email in chiaro),</li>
+</ul>
+<p>      formato e data dell'invio della lista check-in.</p>
+<ul>
+<li>[ ] <b>Conservazione:</b> definire quando cancellare i dati documento (proposta:</li>
+</ul>
+<p>      entro X giorni dalla fine dell'evento) e chi esegue la cancellazione; il resto dei       dati (partecipazione, esigenze, note) con una retention propria.</p>
+<ul>
+<li>[ ] <b>Registro dei trattamenti</b>: aggiornamento a cura di Privacy MET.</li>
+<li>[ ] <b>Consenso a video:</b> il checkbox attuale è di *presa visione* dell'informativa e</li>
+</ul>
+<p>      viene salvato con data/ora. Se durante l'evento sono previste foto/video, serve un       punto aggiuntivo (informativa immagini) da concordare.</p>
+<hr />
+<h2>7. Google Maps: due modi</h2>
+<p>Oggi la landing incorpora la mappa con l'embed pubblico di Google Maps (nessuna API key, nessun costo). Implica una connessione dell'utente ai server Google al caricamento della sezione.</p>
+<p>Alternative, in ordine di privacy crescente:</p>
+<ol>
+<li><b>Click-to-load</b>: al posto dell'iframe, un'immagine statica della zona con un</li>
+</ol>
+<p>   pulsante «Mostra la mappa» — la mappa si carica solo su azione dell'utente. Consigliata.</p>
+<ol>
+<li><b>Solo pulsanti</b>: nessun iframe, solo i link «Apri il percorso»/«Ottieni indicazioni»</li>
+</ol>
+<p>   (che già funzionano e aprono l'app di navigazione dell'utente).</p>
+<ol>
+<li>Mantenere l'iframe, coprendolo con l'informativa cookie.</li>
+</ol>
+<p>I tre percorsi (treno, aereo, auto) e la destinazione sono già impostati con l'indirizzo esatto: <code>Villa Quaranta Tommasi Wine Resort, Via Ospedaletto 57, 37026 Pescantina (VR)</code>.</p>
+<hr />
+<h2>8. Materiali da ricevere</h2>
+<table><thead><tr><th>Materiale</th><th>Formato</th><th>Dove va</th></tr></thead><tbody><tr><td>~~Foto Villa Quaranta — esterno/parco~~ — <b>ricevuta</b> (vista aerea)</td><td>—</td><td>hero sezione Location ✅</td></tr><tr><td>~~Gallery: camere, sale meeting, ristorante, aree esterne, Valpolicella, SPA~~ — <b>ricevute</b></td><td>—</td><td>gallery Location ✅</td></tr><tr><td>Visual hero (opzionale)</td><td>JPG, 2400×1400 px, soggetto leggibile anche scurito</td><td>sfondo prima schermata</td></tr><tr><td>~~Foto delle organizzatrici~~ — <b>ricevuta</b> (Maia Ingaramo, Ambra Demi)</td><td>—</td><td>sezione «Hai bisogno di noi?» ✅</td></tr><tr><td>Programma in PDF (quando definitivo)</td><td>PDF &lt; 5 MB</td><td>pulsante «Scarica il programma»</td></tr><tr><td>Testo informativa privacy e cookie policy</td><td>DOCX/PDF</td><td>link nel form e nel footer</td></tr><tr><td>Liberatoria/autorizzazione all'uso delle foto della struttura</td><td>—</td><td>archivio MET</td></tr></tbody></table>
+<p>Il prototipo mostra ogni slot con formato e dimensioni richieste: le foto si caricano dal backend, senza toccare il codice.</p>
+<p><b>Immagini già inserite.</b> Le sette fotografie di Villa Quaranta e della Valpolicella fornite dal Marketing sono nel prototipo (ritagliate e compresse) e si trovano anche come file singoli in <code>assets/img/location/</code>. Due note per l'implementazione:</p>
+<ul>
+<li>nel prototipo sono incorporate nell'HTML (data-URI) perché il file deve funzionare con un</li>
+</ul>
+<p>  doppio clic: per questo <code>index.html</code> pesa circa 1,2 MB. <b>Nel sito reale vanno servite   come file separati</b> con <code>loading="lazy"</code>, formati moderni (WebP/AVIF) e <code>srcset</code> per   mobile: il primo caricamento scende sotto i 300 KB;</p>
+<ul>
+<li>va confermata con Villa Quaranta l'<b>autorizzazione all'uso</b> delle immagini della</li>
+</ul>
+<p>  struttura, e verificata la fonte della foto dei vigneti (l'unica non riconducibile a un   set ufficiale della struttura).</p>
+<hr />
+<h2>9. Contenuti: cosa manca ancora (e come si comporta il sito)</h2>
+<p>Dove l'informazione non c'è, <b>non compare un campo vuoto</b>: compare «Informazioni in arrivo — Stiamo definendo gli ultimi dettagli. Torna presto per scoprire tutti gli aggiornamenti.» Oggi sono in questo stato:</p>
+<ul>
+<li><b>conferma degli orari</b>: quelli in pagina sono ripresi dall'edizione precedente e sono</li>
+</ul>
+<p>  dichiarati «indicativi, ancora da confermare» (da validare con Villa Quaranta)</p>
+<ul>
+<li>attività/intrattenimento della fascia 18:45–19:30 e dettagli della cena</li>
+<li>orari di check-in e check-out</li>
+<li>dress code e servizi della struttura</li>
+<li>eventuale data di chiusura delle iscrizioni (da decidere: consigliata, con alert in pagina)</li>
+</ul>
+<hr />
+<h2>10. Prima di andare online — checklist finale</h2>
+<ul>
+<li>[ ] Testi approvati dal Marketing MET (naming, claim, descrittore, testi hero e concept)</li>
+<li>[ ] Dati dello step 2 confermati con Villa Quaranta <b>e</b> con Privacy/IT MET</li>
+<li>[ ] Informativa privacy e cookie policy pubblicate e linkate</li>
+<li>[ ] SPF, DKIM, DMARC verificati e test di consegna superati su Gmail/Outlook/domini agenzie</li>
+<li>[ ] Casella <code>events@metenergiaitalia.it</code> attiva, presidiata e con risposte monitorate</li>
+<li>[ ] Account backend creati per le due organizzatrici, con 2FA e ruoli distinti</li>
+<li>[ ] Backup e procedura di cancellazione dei dati documento definiti per iscritto</li>
+<li>[ ] Test del flusso completo su smartphone reale (iOS + Android): registrazione, email, mappa</li>
+<li>[ ] Test duplicato: seconda registrazione con la stessa email → messaggio corretto</li>
+<li>[ ] Verifica accessibilità: contrasti, navigazione da tastiera, dimensione dei campi</li>
+<li>[ ] Rate limiting e anti-spam attivi sui due form pubblici</li>
+<li>[ ] <code>noindex</code> deciso: oggi la pagina è esclusa dai motori di ricerca (evento riservato).</li>
+</ul>
+<p>      Se si vuole indicizzabile, va rimosso il meta tag in <code>index.html</code></p>
+<ul>
+<li>[ ] <b>Modalità modifica rimossa</b> dal file pubblicato (blocco <code>build/07-editor.html</code>)</li>
+<li>[ ] Link della landing inserito nel Save the Date</li>
+</ul>
+<hr />
+<h2>11. Note di brand</h2>
+<p>Tutto il prototipo segue il <b>MET Corporate Identity Book 2023</b>:</p>
+<ul>
+<li><b>Colori</b> — Pantone 7470 C <code>#005870</code> (primario), 636 C <code>#88d2e7</code>, 3258 C <code>#46c3b2</code>,</li>
+</ul>
+<p>  360 C <code>#6bc04b</code>, 7406 C <code>#F4c400</code>, Cool Gray 10 C <code>#63656A</code>.</p>
+<ul>
+<li><b>Gradienti</b> — 01 <code>#003242 → #0095b4</code>, 02 <code>#005870 → #88d2e7</code>, 03 <code>#005870 → #6bc04b</code>.</li>
+<li><b>Font</b> — Montserrat, il web font ufficiale indicato dal manuale come sostituto di Gotham.</li>
+<li><b>Logo</b> — usato solo nelle versioni fornite (bianca su fondi scuri, primaria su fondi</li>
+</ul>
+<p>  chiari), senza rotazioni, ombre, contorni o alterazioni di colore; il logogramma a   “perle” non è mai usato da solo, come prescrive il manuale.</p>
+<ul>
+<li><b>Concept visuale</b> — gli archi di sfere della hero riprendono l'arco di perle del</li>
+</ul>
+<p>  logogramma (il manuale lo descrive come «slancio dinamico» e «unità»): rappresentano   connessione → rete → valore restando lontani dall'estetica “rete informatica”.</p>
+<ul>
+<li><b>Lettering</b> «Bringing new energy to Europe» nel footer e nelle email, nella versione</li>
+</ul>
+<p>  bianca fornita.</p>
+<p>Il naming <b>MET UP!</b> e il claim «Connettersi. Fare rete. Creare valore.» sono elementi di progetto, non presenti nel manuale: se il Marketing di Gruppo deve validarli, meglio farlo prima di distribuire il Save the Date.</p>
+</doc-page>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{OGGETTO}}</title>
+<style>
+  @media only screen and (max-width:620px){
+    .w{width:100% !important} .px{padding-left:22px !important;padding-right:22px !important}
+    .cta a{display:block !important;text-align:center !important}
+  }
+</style>
+</head>
+<!--
+  ============================================================================
+  MET UP! — Template comunicazioni dal backend ("Notifica i partecipanti")
+  ----------------------------------------------------------------------------
+  From name : MET Energia Italia Events
+  From      : events@metenergiaitalia.it
+  Reply-To  : events@metenergiaitalia.it
+
+  Segnaposto compilati dal pannello di amministrazione:
+    {{OGGETTO}}     oggetto dell'email
+    {{TITOLO}}      titolo mostrato nel messaggio
+    {{MESSAGGIO}}   corpo del messaggio (testo su più righe → <br>)
+    {{CTA_LABEL}}   etichetta CTA (default: SCOPRI L'AGGIORNAMENTO)
+    {{URL_EVENTO}}  URL della landing MET UP!
+    {{URL_LOGO}}    URL assoluto del logo MET bianco (ospitato, non data-URI)
+  ============================================================================
+-->
+<body style="margin:0;padding:0;background:#eef4f7;">
+<div style="display:none;font-size:1px;color:#eef4f7;max-height:0;overflow:hidden;">{{TITOLO}}</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#eef4f7;">
+<tr><td align="center" style="padding:26px 12px;">
+  <table role="presentation" class="w" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:600px;background:#ffffff;border-radius:20px;overflow:hidden;font-family:'Montserrat','Helvetica Neue',Arial,sans-serif;">
+
+    <tr><td style="background:#00242f;background-image:linear-gradient(135deg,#00242f 0%,#005870 100%);padding:26px 34px;" class="px">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td align="left"><img src="{{URL_LOGO}}" width="74" alt="MET Energia Italia" style="display:block;border:0;width:74px;height:auto;"></td>
+        <td align="right" style="font-size:16px;font-weight:900;letter-spacing:-.5px;color:#ffffff;">MET <span style="color:#6bc04b;">UP!</span></td>
+      </tr></table>
+    </td></tr>
+
+    <tr><td style="padding:32px 34px 8px;" class="px">
+      <p style="margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:2.2px;text-transform:uppercase;color:#0095b4;">Aggiornamento evento</p>
+      <h1 style="margin:0 0 18px;font-size:26px;line-height:1.2;font-weight:800;letter-spacing:-.8px;color:#0b2b36;">{{TITOLO}}</h1>
+      <div style="font-size:16px;line-height:1.65;color:#0b2b36;">{{MESSAGGIO}}</div>
+    </td></tr>
+
+    <tr><td style="padding:22px 34px 34px;" class="px">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" class="cta"><tr>
+        <td align="center" bgcolor="#005870" style="border-radius:100px;background-image:linear-gradient(135deg,#005870 0%,#6bc04b 100%);">
+          <a href="{{URL_EVENTO}}" style="display:inline-block;padding:16px 32px;font-size:13px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#ffffff;text-decoration:none;border-radius:100px;">{{CTA_LABEL}}</a>
+        </td>
+      </tr></table>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:26px;background:#f2f8fa;border:1px solid #e2ecf0;border-radius:14px;">
+        <tr><td style="padding:16px 20px;font-size:13.5px;line-height:1.6;color:#4a6a76;">
+          <b style="color:#0b2b36;">MET UP!</b> · 14–15 ottobre 2026 · Villa Quaranta Tommasi Wine Resort, Valpolicella (VR)
+        </td></tr>
+      </table>
+
+      <p style="margin:22px 0 0;font-size:14.5px;line-height:1.6;color:#4a6a76;">
+        Per qualsiasi necessità puoi rispondere direttamente a questa email oppure contattare il Team Marketing dalla pagina dell'evento.
+      </p>
+      <p style="margin:18px 0 0;font-size:15px;line-height:1.6;color:#0b2b36;"><b>Team Marketing</b><br>MET Energia Italia</p>
+    </td></tr>
+
+    <tr><td style="background:#00242f;padding:24px 34px;" class="px">
+      <p style="margin:0;font-size:12px;line-height:1.6;color:rgba(255,255,255,.7);">
+        <b style="color:#ffffff;">MET Energia Italia</b> · MET UP! – MET Partner Convention 2026<br>
+        <a href="mailto:events@metenergiaitalia.it" style="color:#88d2e7;text-decoration:none;">events@metenergiaitalia.it</a>
+      </p>
+    </td></tr>
+
+  </table>
+</td></tr>
+</table>
+</body>
+</html>
