@@ -25,30 +25,38 @@ const fmtTs = v => {
 
 let SESSIONE = null, UTENTE = null;
 
-async function apiPost(action, data, session) {
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ action: action, data: data || {}, session: session || SESSIONE })
-  });
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  return res.json();
-}
+/* Organizzatrici abilitate. La password è la chiave del backend: senza quella
+   Google rifiuta la richiesta, quindi nessun dato è raggiungibile dalla pagina. */
+const UTENTI = {
+  'marketing1@metenergiaitalia.it': { nome: 'Organizzatrice 1', ruolo: 'Amministratrice' },
+  'marketing2@metenergiaitalia.it': { nome: 'Organizzatrice 2', ruolo: 'Editor' },
+  'events@metenergiaitalia.it':     { nome: 'Team Marketing',   ruolo: 'Amministratrice' }
+};
 
-/* Le credenziali sono verificate dal backend: nessuna password nel codice della pagina. */
-async function accedi(email, password) {
-  const out = await apiPost('login', { email: email, password: password });
-  if (!out.ok) return out;
-  SESSIONE = out.sessione;
-  UTENTE = { nome: out.nome, ruolo: out.ruolo };
-  applicaDati(out.dati);
+async function leggi(chiave) {
+  const res = await fetch(API_URL + '?token=' + encodeURIComponent(chiave));
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const out = await res.json();
+  if (!out.ok) return null;
   return out;
 }
 
+async function accedi(email, password) {
+  const mail = String(email || '').trim().toLowerCase();
+  const u = UTENTI[mail];
+  if (!u) return { ok: false, error: 'utente' };
+  const out = await leggi(String(password || '').trim());
+  if (!out) return { ok: false, error: 'credenziali' };
+  SESSIONE = String(password || '').trim();
+  UTENTE = u;
+  applicaDati(out);
+  return { ok: true };
+}
+
 async function ricarica() {
-  const out = await apiPost('dati', {});
-  if (!out.ok) throw new Error(out.error || 'errore');
-  applicaDati(out.dati);
+  const out = await leggi(SESSIONE);
+  if (!out) throw new Error('sessione');
+  applicaDati(out);
 }
 
 function applicaDati(d) {
@@ -86,12 +94,13 @@ export function initAdmin() {
     try {
       const out = await accedi(email, pw);
       if (!out.ok) {
-        lgErr.textContent = out.error === 'credenziali'
-          ? 'Email o password non corretti.'
-          : 'Accesso non riuscito. Riprova.';
+        lgErr.textContent = out.error === 'utente'
+          ? 'Questa email non è abilitata all\'area riservata.'
+          : 'Password non corretta.';
         lgErr.style.display = 'block';
       } else {
         sessionStorage.setItem('metup_sess', SESSIONE);
+        LOG.unshift({ dt: fmtTs(new Date()), u: UTENTE.nome, a: 'Accesso all\'area riservata' });
         $('#me-name').textContent = UTENTE.nome;
         $('#me-role').textContent = 'Ruolo: ' + UTENTE.ruolo;
         $('#lg-pw').value = '';
