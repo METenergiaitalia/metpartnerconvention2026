@@ -374,14 +374,12 @@ export function initMetUp(opts = {}) {
     choice.innerHTML = `<div style="grid-column:1/-1;background:rgba(107,192,75,.14);border:1px solid rgba(107,192,75,.45);
         border-radius:20px;padding:22px">
         <b style="display:block;font-size:18px;margin-bottom:6px">Partecipazione confermata ✓</b>
-        <span style="font-size:14.5px;color:rgba(255,255,255,.82)">Grazie ${esc(d.nome)}, ci vediamo il 14 ottobre a Villa Quaranta.
-        Hai ricevuto una mail di conferma all'indirizzo ${esc(d.email)}.</span></div>`;
+        <span style="font-size:14.5px;color:rgba(255,255,255,.82)">Grazie ${esc(d.nome)}, ci vediamo il 14 ottobre a Villa Quaranta.</span></div>`;
     choice.classList.remove('hidden');
     openModal({
       title: 'Ci vediamo a MET UP! 🎉',
       body: `<p class="modal__p"><strong style="color:var(--ink)">La tua partecipazione è confermata.</strong></p>
-             <p class="modal__p">Abbiamo ricevuto correttamente la tua registrazione. Ti aspettiamo il 14 ottobre a Villa Quaranta!</p>
-             <p class="modal__p" style="font-size:13.5px">Riceverai a breve una mail di conferma all'indirizzo <strong>${esc(d.email)}</strong>.</p>`,
+             <p class="modal__p">Abbiamo ricevuto correttamente la tua registrazione. Ti aspettiamo il 14 ottobre a Villa Quaranta!</p>`,
       cta: '<button class="btn btn--primary btn--full" id="m-back">Torna a MET UP!</button>'
     });
     $('#m-back').addEventListener('click', () => { closeModal(); window.scrollTo({ top: 0, behavior: 'smooth' }); });

@@ -4,39 +4,13 @@
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-const P = [
- {id:1,n:"Marco",c:"Rossi",ag:"Energia Verona Srl",ru:"Titolare",em:"mario.rossi@agenziaenergia.it",st:"CONFERMATO",dt:"2026-08-19 09:14",diet:"Senza glutine",note:"Arrivo la sera del 13, pernottamento autonomo.",mail:"Inviata",nasc:"1978-03-04",nascL:"Verona (VR)",res:"Verona (VR)",doc:"CA9384712XY",docL:"Comune di Verona",docD:"2020-05-18"},
- {id:2,n:"Laura",c:"Bianchi",ag:"Partner Energy Group",ru:"Responsabile commerciale",em:"l.bianchi@partnerenergy.it",st:"CONFERMATO",dt:"2026-08-19 10:02",diet:"",note:"",mail:"Inviata",nasc:"1985-11-22",nascL:"Brescia (BS)",res:"Brescia (BS)",doc:"AT1122334ZK",docL:"Comune di Brescia",docD:"2022-01-09"},
- {id:3,n:"Giuseppe",c:"Ferrari",ag:"Ferrari Energie",ru:"Agente",em:"g.ferrari@ferrarienergie.it",st:"CONFERMATO",dt:"2026-08-19 11:41",diet:"Vegetariano",note:"",mail:"Inviata",nasc:"1969-07-15",nascL:"Mantova (MN)",res:"Mantova (MN)",doc:"CI7781200AB",docL:"Comune di Mantova",docD:"2019-09-30"},
- {id:4,n:"Chiara",c:"Colombo",ag:"CG Consulting",ru:"Titolare",em:"chiara@cgconsulting.it",st:"NON PARTECIPA",dt:"2026-08-19 12:20",diet:"",note:"Impegni familiari, purtroppo salto questa edizione.",mail:"Inviata"},
- {id:5,n:"Andrea",c:"Ricci",ag:"Ricci Utility Partners",ru:"Direttore commerciale",em:"a.ricci@rup.it",st:"CONFERMATO",dt:"2026-08-19 14:07",diet:"Allergie",note:"Allergia a crostacei e frutta a guscio.",mail:"Inviata",nasc:"1981-02-08",nascL:"Trento (TN)",res:"Rovereto (TN)",doc:"CA5566778QW",docL:"Comune di Rovereto",docD:"2023-04-12"},
- {id:6,n:"Silvia",c:"Marino",ag:"Marino Energia",ru:"Agente",em:"s.marino@marinoenergia.it",st:"CONFERMATO",dt:"2026-08-19 15:33",diet:"",note:"",mail:"Errore",nasc:"1990-06-19",nascL:"Padova (PD)",res:"Padova (PD)",doc:"AT9081726LP",docL:"Comune di Padova",docD:"2021-11-02"},
- {id:7,n:"Davide",c:"Greco",ag:"Greco &amp; Partners",ru:"Titolare",em:"d.greco@grecopartners.it",st:"CONFERMATO",dt:"2026-08-20 08:12",diet:"Senza lattosio",note:"",mail:"Inviata",nasc:"1974-09-27",nascL:"Vicenza (VI)",res:"Vicenza (VI)",doc:"CI3344556NM",docL:"Comune di Vicenza",docD:"2018-07-21"},
- {id:8,n:"Federica",c:"Costa",ag:"Costa Energy Solutions",ru:"Back office",em:"f.costa@costaenergy.it",st:"CONFERMATO",dt:"2026-08-20 09:45",diet:"",note:"Vorrei un posto vicino ai colleghi di Verona.",mail:"Inviata",nasc:"1993-12-03",nascL:"Verona (VR)",res:"San Bonifacio (VR)",doc:"CA1029384RT",docL:"Comune di San Bonifacio",docD:"2024-02-15"},
- {id:9,n:"Roberto",c:"Fontana",ag:"Fontana Utilities",ru:"Agente",em:"r.fontana@fontanautilities.it",st:"NON PARTECIPA",dt:"2026-08-20 10:29",diet:"",note:"",mail:"Inviata"},
- {id:10,n:"Elena",c:"Vitale",ag:"Vitale Energia Srl",ru:"Responsabile rete",em:"e.vitale@vitaleenergia.it",st:"CONFERMATO",dt:"2026-08-20 11:03",diet:"Vegano",note:"",mail:"Inviata",nasc:"1987-04-30",nascL:"Bologna (BO)",res:"Bologna (BO)",doc:"AT6677889XC",docL:"Comune di Bologna",docD:"2022-08-08"},
- {id:11,n:"Simone",c:"Barbieri",ag:"Barbieri Energie",ru:"Titolare",em:"s.barbieri@barbierienergie.it",st:"CONFERMATO",dt:"2026-08-20 11:58",diet:"",note:"",mail:"Inviata",nasc:"1972-01-11",nascL:"Modena (MO)",res:"Modena (MO)",doc:"CI2233445BV",docL:"Comune di Modena",docD:"2020-10-05"},
- {id:12,n:"Martina",c:"Lombardi",ag:"Lombardi Power",ru:"Agente",em:"m.lombardi@lombardipower.it",st:"CONFERMATO",dt:"2026-08-20 13:21",diet:"Senza glutine",note:"Celiachia diagnosticata.",mail:"Inviata",nasc:"1996-08-24",nascL:"Trieste (TS)",res:"Trieste (TS)",doc:"CA8899001DF",docL:"Comune di Trieste",docD:"2023-06-27"}
-];
-const REQ = [
- {id:1,dt:"2026-08-20 09:12",n:"Federica",c:"Costa",ag:"Costa Energy Solutions",em:"f.costa@costaenergy.it",og:"Soggiorno e check-in",msg:"Buongiorno, è possibile arrivare la sera del 13 ottobre? Vorrei organizzarmi con il viaggio.",st:"Nuova"},
- {id:2,dt:"2026-08-20 10:44",n:"Andrea",c:"Ricci",ag:"Ricci Utility Partners",em:"a.ricci@rup.it",og:"Esigenze alimentari",msg:"Ho dimenticato di segnalare che l'allergia riguarda anche il sedano. Potete aggiornare la mia scheda?",st:"Nuova"},
- {id:3,dt:"2026-08-19 16:30",n:"Marco",c:"Rossi",ag:"Energia Verona Srl",em:"mario.rossi@agenziaenergia.it",og:"Modifica dei miei dati di registrazione",msg:"Ho sbagliato a scrivere il numero del documento, come posso correggerlo?",st:"Risolta"}
-];
-const STOR = [
- {dt:"2026-08-19 17:40",og:"Save the Date · MET UP! 14–15 ottobre 2026",au:"Organizzatrice 1",n:96,st:"Inviata",del:94,bo:2,ap:71,cl:38},
- {dt:"2026-08-20 12:05",og:"MET UP! · Aperte le conferme di partecipazione",au:"Organizzatrice 2",n:96,st:"Inviata",del:95,bo:1,ap:58,cl:31}
-];
-const LOG = [
- {dt:"2026-08-20 13:22",u:"Organizzatrice 1",a:"Visualizzazione dati documento — scheda #12 (M. Lombardi)"},
- {dt:"2026-08-20 12:05",u:"Organizzatrice 2",a:"Invio comunicazione a 96 destinatari"},
- {dt:"2026-08-20 09:30",u:"Organizzatrice 1",a:"Export «Lista partecipanti» (XLSX)"},
- {dt:"2026-08-19 17:40",u:"Organizzatrice 1",a:"Invio Save the Date a 96 destinatari"},
- {dt:"2026-08-19 08:55",u:"Organizzatrice 2",a:"Modifica contenuti: sezione «Info utili»"}
-];
+const P = [];
+const REQ = [];
+const STOR = [];
+const LOG = [];
 const ACC = [
- {n:"Organizzatrice 1",em:"marketing1@metenergiaitalia.it",ru:"Amministratrice",doc:"Sì",last:"2026-08-20 13:20"},
- {n:"Organizzatrice 2",em:"marketing2@metenergiaitalia.it",ru:"Editor",doc:"Sì",last:"2026-08-20 12:05"}
+ {n:"Organizzatrice 1",em:"marketing1@metenergiaitalia.it",ru:"Amministratrice",doc:"Sì",last:"—"},
+ {n:"Organizzatrice 2",em:"marketing2@metenergiaitalia.it",ru:"Editor",doc:"Sì",last:"—"}
 ];
 
 let bound = false;
@@ -88,9 +62,9 @@ export function initAdmin() {
     const c = conf().length, no = P.length - c, al = P.filter(p => p.diet).length,
       nt = P.filter(p => p.note).length, rq = REQ.filter(r => r.st !== 'Risolta').length;
     $('#kpis').innerHTML = [
-      ['Partecipanti confermati', c, 'g', 'su ~96 invitati'],
+      ['Partecipanti confermati', c, 'g', 'risposte positive'],
       ['Non parteciperanno', no, 'b', 'risposte negative'],
-      ['Totale risposte', P.length, '', 'tasso di risposta ' + Math.round(P.length / 96 * 100) + '%'],
+      ['Totale risposte', P.length, '', 'registrazioni ricevute'],
       ['Allergie/intolleranze', al, 'w', 'da segnalare alla struttura'],
       ['Note da leggere', nt, '', 'richieste nel campo note'],
       ['Richieste da gestire', rq, 'w', 'dal form contatti']
@@ -106,14 +80,19 @@ export function initAdmin() {
     ].map(q => `<button data-v="${q[0]}"><b>${q[1].toUpperCase()}</b><span>${q[2]}</span></button>`).join('');
 
     const l = STOR[STOR.length - 1];
+    if (!l) {
+      $('#last-com').innerHTML = '<div class="empty">Nessuna comunicazione inviata.</div>';
+    } else {
     $('#last-com').innerHTML = `<div style="font-size:13px"><b style="font-size:14.5px">${esc(l.og)}</b>
       <div style="color:var(--ink-soft);margin-top:6px">${l.dt} · ${esc(l.au)} · ${l.n} destinatari</div>
       <div class="tools" style="margin-top:12px"><span class="pill pill--ok"><i class="dot"></i>${l.st}</span>
       <span class="pill pill--i">${l.del} consegnate</span><span class="pill pill--w">${l.bo} bounce</span>
       <span class="pill pill--i">${l.ap} aperture</span></div>
       <button class="btn btn--o btn--xs" data-v="stor" style="margin-top:14px">Vedi storico completo</button></div>`;
+    }
 
     $('#t-recent').innerHTML = `<thead><tr><th>Partecipante</th><th>Agenzia</th><th>Stato</th><th>Data</th></tr></thead><tbody>` +
+      (P.length ? '' : '<tr><td colspan="4" class="empty">Nessuna registrazione ricevuta.</td></tr>') +
       P.slice().sort((a, b) => b.dt.localeCompare(a.dt)).slice(0, 5).map(p => `<tr data-id="${p.id}">
         <td><b>${esc(p.n)} ${esc(p.c)}</b></td><td>${p.ag}</td>
         <td>${p.st === 'CONFERMATO' ? '<span class="pill pill--ok"><i class="dot"></i>Confermato</span>' : '<span class="pill pill--no"><i class="dot"></i>Non partecipa</span>'}</td>
@@ -141,7 +120,7 @@ export function initAdmin() {
         <td>${p.diet ? '<span class="pill pill--w">Sì</span>' : '<span style="color:var(--ink-soft)">No</span>'}</td>
         <td>${p.note ? '<span class="pill pill--i">Sì</span>' : '<span style="color:var(--ink-soft)">No</span>'}</td>
         <td>${p.mail === 'Inviata' ? '<span class="pill pill--ok">Inviata</span>' : '<span class="pill pill--b">Errore</span>'}</td>
-      </tr>`).join('') : '<tr><td colspan="9" class="empty">Nessun partecipante corrisponde ai filtri impostati.</td></tr>') + `</tbody>`;
+      </tr>`).join('') : (q || f || d ? '<tr><td colspan="9" class="empty">Nessun partecipante corrisponde ai filtri impostati.</td></tr>' : '<tr><td colspan="9" class="empty">Nessuna registrazione ricevuta.<br><span style="font-size:12.5px">Le risposte dei partner compariranno qui.</span></td></tr>')) + `</tbody>`;
     $('#p-count').textContent = rows.length + ' partecipanti visualizzati su ' + P.length + ' risposte totali · ' + conf().length + ' confermati';
     $$('#t-part th').forEach(th => th.addEventListener('click', () => {
       const k = th.dataset.k;
@@ -307,6 +286,7 @@ export function initAdmin() {
   /* ---------------- storico ---------------- */
   function renderStor() {
     $('#t-stor').innerHTML = `<thead><tr><th>Data/ora</th><th>Oggetto</th><th>Autore</th><th>Destinatari</th><th>Stato</th><th>Consegnate</th><th>Bounce</th><th>Aperture</th><th>Click</th></tr></thead><tbody>` +
+      (STOR.length ? '' : '<tr><td colspan="9" class="empty">Nessuna comunicazione inviata.</td></tr>') +
       STOR.slice().reverse().map(s => `<tr><td>${s.dt}</td><td><b>${esc(s.og)}</b></td><td>${esc(s.au)}</td><td>${s.n}</td>
         <td>${s.st === 'Inviata' ? '<span class="pill pill--ok"><i class="dot"></i>Inviata</span>' : '<span class="pill pill--w"><i class="dot"></i>In corso</span>'}</td>
         <td>${s.del || '—'}</td><td>${s.bo ? '<span class="pill pill--b">' + s.bo + '</span>' : '—'}</td><td>${s.ap || '—'}</td><td>${s.cl || '—'}</td></tr>`).join('') + `</tbody>`;
@@ -331,7 +311,7 @@ export function initAdmin() {
           <button class="btn btn--o btn--xs" data-req="${r.id}" data-st="In gestione">Segna «In gestione»</button>
           <button class="btn btn--o btn--xs" data-req="${r.id}" data-st="Risolta">Segna «Risolta»</button>
         </div>
-      </div>`).join('') : '<div class="empty">Nessuna richiesta con questo stato.</div>';
+      </div>`).join('') : '<div class="empty">Nessuna richiesta ricevuta.</div>';
     $$('[data-req]').forEach(b => b.addEventListener('click', () => {
       const r = REQ.find(x => x.id == b.dataset.req); r.st = b.dataset.st;
       renderReq(); renderDash(); updBadge(); toast('Richiesta aggiornata: ' + r.st);
@@ -366,7 +346,7 @@ export function initAdmin() {
 
   /* ---------------- log & account ---------------- */
   function renderLog() {
-    $('#log-list').innerHTML = LOG.slice(0, 10).map(l => `
+    $('#log-list').innerHTML = (LOG.length ? '' : '<div class="empty">Nessuna azione registrata.</div>') + LOG.slice(0, 10).map(l => `
       <div style="display:grid;grid-template-columns:112px 1fr;gap:12px;font-size:12.5px;padding-bottom:10px;border-bottom:1px dashed var(--line)">
         <span style="color:var(--ink-soft)">${l.dt}</span><span><b>${esc(l.u)}</b> — ${esc(l.a)}</span></div>`).join('');
     $('#t-acc').innerHTML = `<thead><tr><th>Organizzatrice</th><th>Email</th><th>Ruolo</th><th>Accesso dati documento</th><th>Ultimo accesso</th></tr></thead><tbody>` +
