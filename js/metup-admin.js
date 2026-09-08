@@ -13,6 +13,62 @@ const ACC = [
  {n:"Organizzatrice 2",em:"marketing2@metenergiaitalia.it",ru:"Editor",doc:"Sì",last:"—"}
 ];
 
+const API_URL = 'https://script.google.com/macros/s/AKfycbwe73rzaMn1kSYBS5CS6apRokcKlxM0WGMLx7M1sXYGMuF5eEw8J7BcALun-sKv9X9L/exec';
+
+const fmtTs = v => {
+  if (!v) return '—';
+  const d = new Date(v);
+  if (isNaN(d)) return String(v);
+  const p = n => String(n).padStart(2, '0');
+  return p(d.getDate()) + '/' + p(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+};
+
+let SESSIONE = null, UTENTE = null;
+
+async function apiPost(action, data, session) {
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ action: action, data: data || {}, session: session || SESSIONE })
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+/* Le credenziali sono verificate dal backend: nessuna password nel codice della pagina. */
+async function accedi(email, password) {
+  const out = await apiPost('login', { email: email, password: password });
+  if (!out.ok) return out;
+  SESSIONE = out.sessione;
+  UTENTE = { nome: out.nome, ruolo: out.ruolo };
+  applicaDati(out.dati);
+  return out;
+}
+
+async function ricarica() {
+  const out = await apiPost('dati', {});
+  if (!out.ok) throw new Error(out.error || 'errore');
+  applicaDati(out.dati);
+}
+
+function applicaDati(d) {
+  d = d || {};
+  P.length = 0;
+  (d.partecipanti || []).forEach((r, i) => {
+    P.push({
+      id: i + 1, dt: fmtTs(r[0]), st: r[1] || 'CONFERMATO', n: r[2], c: r[3], ag: r[4], ru: r[5],
+      em: r[6], diet: r[7] || '', dietNote: r[8] || '', note: r[9] || '', mail: r[10] || '—',
+      protetti: true
+    });
+  });
+  REQ.length = 0;
+  (d.richieste || []).forEach((r, i) => {
+    REQ.push({ id: i + 1, dt: fmtTs(r[0]), n: r[1], c: r[2], ag: r[3], em: r[4], og: r[5], msg: r[6], st: r[7] || 'Nuova' });
+  });
+  LOG.length = 0;
+  (d.log || []).forEach(r => LOG.push({ dt: fmtTs(r[0]), u: r[1], a: r[2] }));
+}
+
 let bound = false;
 
 export function initAdmin() {
@@ -20,8 +76,48 @@ export function initAdmin() {
   bound = true;
 
   /* ---------------- login / shell ---------------- */
-  $('#lg-go').addEventListener('click', () => { $('#login').style.display = 'none'; $('#app').classList.add('is-on'); });
-  $('#logout').addEventListener('click', e => { e.preventDefault(); $('#app').classList.remove('is-on'); $('#login').style.display = 'grid'; });
+  const lgBtn = $('#lg-go'), lgErr = $('#lg-err');
+  async function tentaAccesso() {
+    const email = ($('#lg-mail').value || '').trim();
+    const pw = $('#lg-pw').value || '';
+    if (!email || !pw) { lgErr.textContent = 'Inserisci email e password.'; lgErr.style.display = 'block'; return; }
+    lgErr.style.display = 'none';
+    lgBtn.disabled = true; lgBtn.textContent = 'Accesso in corso…';
+    try {
+      const out = await accedi(email, pw);
+      if (!out.ok) {
+        lgErr.textContent = out.error === 'credenziali'
+          ? 'Email o password non corretti.'
+          : 'Accesso non riuscito. Riprova.';
+        lgErr.style.display = 'block';
+      } else {
+        sessionStorage.setItem('metup_sess', SESSIONE);
+        $('#me-name').textContent = UTENTE.nome;
+        $('#me-role').textContent = 'Ruolo: ' + UTENTE.ruolo;
+        $('#lg-pw').value = '';
+        $('#login').style.display = 'none';
+        $('#app').classList.add('is-on');
+        renderDash(); renderPart(); renderReq(); renderLog(); updBadge();
+      }
+    } catch (e) {
+      lgErr.textContent = 'Connessione al server non riuscita. Riprova tra qualche istante.';
+      lgErr.style.display = 'block';
+    }
+    lgBtn.disabled = false; lgBtn.textContent = 'Accedi';
+  }
+  lgBtn.addEventListener('click', tentaAccesso);
+  $('#lg-pw').addEventListener('keydown', e => { if (e.key === 'Enter') tentaAccesso(); });
+
+  $('#reload').addEventListener('click', async () => {
+    if (!SESSIONE) return;
+    toast('Aggiornamento in corso…');
+    try { await ricarica(); renderDash(); renderPart(); renderReq(); renderLog(); updBadge(); toast('Dati aggiornati'); }
+    catch (e) { toast('Sessione scaduta: effettua di nuovo l\'accesso'); }
+  });
+  $('#logout').addEventListener('click', e => {
+    e.preventDefault(); SESSIONE = null; sessionStorage.removeItem('metup_sess');
+    $('#app').classList.remove('is-on'); $('#login').style.display = 'grid';
+  });
   $('#hb').addEventListener('click', () => $('#side').classList.toggle('is-open'));
 
   const TITLES = {
@@ -149,7 +245,11 @@ export function initAdmin() {
       </div>
       <div class="sect">Dati anagrafici e contatto</div>
       ${dl([['Nome', esc(p.n)], ['Cognome', esc(p.c)], ['Agenzia', p.ag], ['Email', esc(p.em)]])}
-      ${p.st === 'CONFERMATO' ? `
+      ${p.st === 'CONFERMATO' && p.protetti ? `
+        <div class="sect">Dati per il check-in</div>
+        <div class="dl prot"><div class="warn">🔒 Data e luogo di nascita, residenza e documento di identità non transitano da questa pagina: sono consultabili solo nel foglio protetto, accessibile agli account autorizzati.</div></div>
+      ` : ''}
+      ${p.st === 'CONFERMATO' && !p.protetti ? `
         <div class="sect">Dati per il check-in</div>
         <div class="dl prot">
           <div class="warn">🔒 Dati sensibili: visibili solo agli account autorizzati, mai inclusi nella tabella generale né inviati per email. Ogni visualizzazione in chiaro è tracciata nel log.</div>
@@ -162,14 +262,12 @@ export function initAdmin() {
         </div>
         <button class="btn btn--o btn--xs" id="doc-show">Mostra numero in chiaro</button>` : ''}
       <div class="sect">Esigenze alimentari</div>
-      ${dl([['Segnalate', p.diet ? '<span class="pill pill--w">' + esc(p.diet) + '</span>' : 'Nessuna'], ['Dettagli', esc(p.note && p.diet ? p.note : '—')]])}
+      ${dl([['Segnalate', p.diet ? '<span class="pill pill--w">' + esc(p.diet) + '</span>' : 'Nessuna'], ['Dettagli', esc(p.dietNote || '—')]])}
       <div class="sect">Note del partecipante</div>
       <div class="dl"><div class="dl__r" style="grid-template-columns:1fr"><b style="font-weight:500">${p.note ? esc(p.note) : '<span style="color:var(--ink-soft)">Nessuna nota</span>'}</b></div></div>
       <div class="sect">Azioni</div>
       <div class="tools">
-        <button class="btn btn--o btn--xs" id="edit-p">Correggi i dati</button>
-        <button class="btn btn--o btn--xs" id="resend">Rinvia email di conferma</button>
-        <button class="btn btn--d btn--xs" id="chg-st">${p.st === 'CONFERMATO' ? 'Segna come «Non partecipa»' : 'Segna come «Confermato»'}</button>
+        <button class="btn btn--o btn--xs" id="edit-p">Come correggere i dati</button>
       </div>`;
     $('#dw').classList.add('is-on');
     const ds = $('#doc-show');
@@ -179,11 +277,9 @@ export function initAdmin() {
       renderLog(); toast('Accesso al dato registrato nel log amministrativo');
     });
     $('#edit-p').addEventListener('click', () => modal('Correzione dati partecipante',
-      `<p>Nel sito definitivo questa azione apre il form di modifica dei campi della scheda: le organizzatrici autorizzate possono correggere qualsiasi dato, il partecipante no.</p>
-       <p>Ogni modifica viene salvata con autore, data/ora e valore precedente nel log amministrativo.</p>`,
+      `<p>Le correzioni si effettuano direttamente nel foglio Google «MET UP 2026 — Registrazioni»: modifica la cella e premi «Aggiorna» qui in alto per rileggere i dati.</p>
+       <p>Il partecipante non può modificare i propri dati dopo l'invio.</p>`,
       `<button class="btn btn--o" data-mdx>Chiudi</button>`));
-    $('#resend').addEventListener('click', () => { p.mail = 'Inviata'; renderPart(); renderDash(); toast('Email di conferma rinviata a ' + p.em); openCard(p); });
-    $('#chg-st').addEventListener('click', () => { p.st = p.st === 'CONFERMATO' ? 'NON PARTECIPA' : 'CONFERMATO'; renderPart(); renderDash(); renderComRcp(); toast('Stato aggiornato: ' + p.st); openCard(p); });
     $$('#md [data-mdx]').forEach(b => b.addEventListener('click', mdx));
   }
 
