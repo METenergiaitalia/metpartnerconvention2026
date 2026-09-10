@@ -229,7 +229,8 @@ export function initMetUp(opts = {}) {
   const ICO_OK = '<svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M4.5 12.5l5 5L20 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const ICO_I = '<svg width="34" height="34" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/><path d="M12 11v6M12 7.6v.9" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>';
 
-  function openModal({ title, body, cta, ico = ICO_OK, grad = 'var(--grad-03)' }) {
+  function openModal({ title, body, cta, ico = ICO_OK, grad = 'var(--grad-03)', doc = false }) {
+    $('.modal__box').classList.toggle('is-doc', !!doc);
     $('#modal-t').innerHTML = title;
     $('#modal-body').innerHTML = body;
     $('#modal-cta').innerHTML = cta || '';
@@ -255,15 +256,48 @@ export function initMetUp(opts = {}) {
   function closeLb() { lb.classList.remove('is-on'); document.body.classList.remove('no-scroll'); }
   lb.addEventListener('click', e => { if (e.target === lb || e.target.hasAttribute('data-lb-close')) closeLb(); });
 
+  const PRIVACY_HTML = `
+    <div style="text-align:left;max-height:56vh;overflow-y:auto;padding-right:6px">
+      <p class="modal__p" style="font-size:13px;margin-bottom:14px"><strong style="color:var(--ink)">Informativa sul trattamento dei dati personali</strong><br>ai sensi dell'art. 13 del Regolamento (UE) 2016/679 («GDPR»)</p>
+      <p class="modal__p" style="font-size:13px">MET Energia Italia S.p.A., in qualità di Titolare del trattamento, informa gli interessati che i dati personali forniti attraverso il presente modulo saranno trattati nel rispetto della normativa vigente in materia di protezione dei dati personali.</p>
+      <p class="modal__p" style="font-size:13px"><b style="color:var(--ink)">1. Titolare del trattamento</b><br>Il Titolare del trattamento è MET Energia Italia S.p.A., con sede in Viale Francesco Restelli 3/7, 20124 Milano (MI), contattabile all'indirizzo e-mail <a href="mailto:privacy.metita@met.com" style="color:var(--primary);text-decoration:underline">privacy.metita@met.com</a>.</p>
+      <p class="modal__p" style="font-size:13px"><b style="color:var(--ink)">2. Dati personali trattati</b><br>Attraverso il presente modulo potranno essere raccolti dati personali necessari all'organizzazione del soggiorno e alle relative procedure di check-in presso la struttura alberghiera, quali, a titolo esemplificativo, nome, cognome, data e luogo di nascita, nazionalità e gli ulteriori dati richiesti nel modulo.</p>
+      <p class="modal__p" style="font-size:13px"><b style="color:var(--ink)">3. Finalità e base giuridica del trattamento</b><br>I dati personali saranno trattati esclusivamente per le seguenti finalità:</p>
+      <ul style="font-size:13px;color:var(--ink-soft);margin:0 0 12px;padding-left:20px;line-height:1.6">
+        <li>organizzazione e gestione del soggiorno presso la struttura alberghiera «Villa Quaranta»;</li>
+        <li>gestione delle procedure necessarie alla prenotazione e al check-in;</li>
+        <li>comunicazione dei dati alla struttura alberghiera ai fini della gestione del soggiorno e dell'adempimento degli obblighi previsti dalla normativa applicabile.</li>
+      </ul>
+      <p class="modal__p" style="font-size:13px">Il trattamento è effettuato nella misura necessaria alla gestione e organizzazione del soggiorno e all'esecuzione delle attività ad esso connesse, ai sensi dell'art. 6, par. 1, lett. b), del GDPR, nonché, ove applicabile, per l'adempimento di obblighi di legge ai sensi dell'art. 6, par. 1, lett. c), del GDPR.</p>
+      <p class="modal__p" style="font-size:13px"><b style="color:var(--ink)">4. Natura del conferimento dei dati</b><br>Il conferimento dei dati richiesti nel modulo è necessario per consentire la corretta organizzazione del soggiorno e lo svolgimento delle procedure di check-in. L'eventuale mancato conferimento dei dati necessari potrebbe comportare l'impossibilità di completare preventivamente le relative procedure.</p>
+      <p class="modal__p" style="font-size:13px"><b style="color:var(--ink)">5. Destinatari dei dati</b><br>I dati personali raccolti saranno trattati esclusivamente da personale autorizzato di MET Energia Italia S.p.A. e potranno essere comunicati alla struttura alberghiera presso la quale è previsto il soggiorno, limitatamente ai dati necessari alla gestione della prenotazione, del soggiorno e delle procedure di check-in.<br><br>La struttura alberghiera tratterà i dati ricevuti secondo quanto previsto dalla normativa applicabile e, per i trattamenti effettuati in qualità di autonomo Titolare, secondo la propria informativa privacy.<br><br>I dati potranno inoltre essere comunicati ad altri soggetti esclusivamente qualora ciò sia necessario per adempiere a obblighi previsti dalla legge.</p>
+      <p class="modal__p" style="font-size:13px"><b style="color:var(--ink)">6. Modalità e durata del trattamento</b><br>I dati saranno trattati con strumenti informatici e/o telematici, adottando misure tecniche e organizzative adeguate a garantirne la sicurezza e la riservatezza.<br><br>MET Energia Italia S.p.A. conserverà i dati personali esclusivamente per il periodo necessario al perseguimento delle finalità sopra indicate e, successivamente, per il tempo eventualmente necessario all'adempimento di obblighi di legge o alla tutela dei propri diritti.</p>
+      <p class="modal__p" style="font-size:13px"><b style="color:var(--ink)">7. Trasferimento dei dati</b><br>I dati personali non saranno trasferiti verso Paesi situati al di fuori dello Spazio Economico Europeo, salvo che ciò risulti necessario e avvenga nel rispetto delle condizioni e delle garanzie previste dal GDPR.</p>
+      <p class="modal__p" style="font-size:13px"><b style="color:var(--ink)">8. Diritti dell'interessato</b><br>L'interessato può esercitare, nei casi previsti dalla normativa applicabile, i diritti riconosciuti dagli artt. 15-22 del GDPR, tra cui il diritto di:</p>
+      <ul style="font-size:13px;color:var(--ink-soft);margin:0 0 12px;padding-left:20px;line-height:1.6">
+        <li>ottenere l'accesso ai propri dati personali;</li>
+        <li>richiederne la rettifica o l'aggiornamento;</li>
+        <li>richiederne la cancellazione, ove applicabile;</li>
+        <li>ottenere la limitazione del trattamento;</li>
+        <li>opporsi al trattamento, nei casi previsti dal GDPR;</li>
+        <li>richiedere la portabilità dei dati, ove applicabile.</li>
+      </ul>
+      <p class="modal__p" style="font-size:13px">Le richieste possono essere rivolte a MET Energia Italia S.p.A. all'indirizzo <a href="mailto:privacy.metita@met.com" style="color:var(--primary);text-decoration:underline">privacy.metita@met.com</a>.<br><br>L'interessato ha inoltre il diritto di proporre reclamo al Garante per la protezione dei dati personali, secondo le modalità previste dalla normativa vigente.</p>
+      <p class="modal__p" style="font-size:13px"><b style="color:var(--ink)">9. Aggiornamenti</b><br>La presente informativa potrà essere aggiornata qualora intervengano modifiche nelle modalità o nelle finalità del trattamento dei dati personali.</p>
+    </div>`;
+
+  const COOKIE_HTML = `
+    <p class="modal__p">Questo sito utilizza esclusivamente cookie tecnici necessari al funzionamento della pagina e alla compilazione del modulo di registrazione. Non vengono utilizzati cookie di profilazione né strumenti di tracciamento pubblicitario.</p>
+    <p class="modal__p">Per informazioni sul trattamento dei dati personali si rinvia all'Informativa sul trattamento dei dati personali e ai contatti indicati al suo interno.</p>`;
+
   $$('[data-doc]').forEach(a => a.addEventListener('click', e => {
     e.preventDefault();
-    const t = a.getAttribute('data-doc') === 'cookie' ? 'Cookie Policy' : 'Informativa privacy';
+    const cookie = a.getAttribute('data-doc') === 'cookie';
     openModal({
-      title: t,
-      body: `<p class="modal__p">Nel prototipo questo link è un segnaposto.</p>
-             <p class="modal__p">Il testo definitivo dell'${t.toLowerCase()} deve essere fornito e validato da <strong>Privacy/Legal MET</strong> prima della pubblicazione, con particolare attenzione al trattamento dei dati del documento di identità raccolti per il check-in in hotel.</p>`,
-      cta: '<button class="btn btn--outline btn--full" data-close-in>Ho capito</button>',
-      ico: ICO_I, grad: 'var(--grad-01)'
+      title: cookie ? 'Cookie Policy' : 'Trattamento dei dati personali',
+      body: cookie ? COOKIE_HTML : PRIVACY_HTML,
+      cta: '<button class="btn btn--outline btn--full" data-close-in>Chiudi</button>',
+      ico: ICO_I, grad: 'var(--grad-01)', doc: !cookie
     });
     $('[data-close-in]').addEventListener('click', closeModal);
   }));
