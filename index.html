@@ -380,6 +380,9 @@ input.err,select.err,textarea.err{border-color:#e04f3d;box-shadow:0 0 0 4px rgba
 .modal__box{position:relative;background:#fff;border-radius:var(--r-xl);padding:34px 24px;
   max-width:520px;width:100%;box-shadow:var(--shadow-l);text-align:center;
   animation:pop .4s cubic-bezier(.2,.9,.3,1) both;max-height:88vh;overflow-y:auto}
+.modal__box.is-doc{max-width:720px;text-align:left}
+.modal__box.is-doc .modal__ico{display:none}
+.modal__box.is-doc .modal__t{font-size:22px}
 @keyframes pop{from{opacity:0;transform:scale(.94) translateY(16px)}to{opacity:1;transform:none}}
 .modal__ico{width:74px;height:74px;border-radius:50%;background:var(--grad-03);display:grid;place-items:center;margin:0 auto 20px}
 .modal__t{font-size:27px;font-weight:900;letter-spacing:-.03em;margin-bottom:12px}
@@ -749,7 +752,7 @@ input.err,select.err,textarea.err{border-color:#e04f3d;box-shadow:0 0 0 4px rgba
     
       <div class="rev mt-m" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center">
         <a class="btn btn--solid" href="programma.html" target="_blank" rel="noopener">Scarica il programma in PDF ↓</a>
-        <span style="font-size:12.5px;color:var(--ink-soft)">Una pagina, salvabile in PDF · aggiornato al 8 settembre 2026</span>
+        <span style="font-size:12.5px;color:var(--ink-soft)">Una pagina, salvabile in PDF · aggiornato al 10 settembre 2026</span>
       </div>
     
   </div>
@@ -797,12 +800,8 @@ input.err,select.err,textarea.err{border-color:#e04f3d;box-shadow:0 0 0 4px rgba
         <h3 style="font-size:23px;font-weight:800;letter-spacing:-.025em">Cosa è cambiato di recente</h3>
         <div class="upd">
           <div class="upd__i">
-            <div class="upd__dt">20 agosto</div>
+            <div class="upd__dt">10 settembre</div>
             <div class="upd__tx"><b>Online la pagina di MET UP!<span class="tag tag--new">new</span></b><span>Aperte le conferme di partecipazione per la rete di agenzie partner.</span></div>
-          </div>
-          <div class="upd__i">
-            <div class="upd__dt">18 agosto</div>
-            <div class="upd__tx"><b>Save the Date</b><span>Inviato alla rete il Save the Date con le date e la location dell'evento.</span></div>
           </div>
         </div>
       </div>
@@ -965,9 +964,9 @@ input.err,select.err,textarea.err{border-color:#e04f3d;box-shadow:0 0 0 4px rgba
         <div class="recap" id="recap"></div>
         <label class="opt" id="privacy-opt">
           <input type="checkbox" id="f-privacy" />
-          <span style="font-weight:600;font-size:14px">Dichiaro di aver preso visione dell'<a href="#" style="color:var(--primary);text-decoration:underline" data-doc="privacy">informativa privacy</a>. <span class="req">*</span></span>
+          <span style="font-weight:600;font-size:14px">Dichiaro di aver letto e compreso l'<a href="#" style="color:var(--primary);text-decoration:underline" data-doc="privacy">Informativa sul trattamento dei dati personali</a> ai sensi dell'art. 13 del Regolamento (UE) 2016/679. <span class="req">*</span></span>
         </label>
-        <span class="emsg" id="privacy-err">È necessario prendere visione dell'informativa privacy.</span>
+        <span class="emsg" id="privacy-err">È necessario dichiarare di aver letto l'Informativa sul trattamento dei dati personali.</span>
         <div class="fnav">
           <button class="btn btn--outline" data-prev="true">← Indietro</button>
           <button class="btn btn--primary" id="btn-submit-yes">Confermo la mia partecipazione</button>
@@ -1170,7 +1169,7 @@ input.err,select.err,textarea.err{border-color:#e04f3d;box-shadow:0 0 0 4px rgba
         <h4>MET Energia Italia</h4>
         <ul>
           <li><a href="https://it.met.com/" target="_blank" rel="noopener">Sito MET Energia Italia</a></li>
-          <li><a href="#" data-doc="privacy">Privacy Policy</a></li>
+          <li><a href="#" data-doc="privacy">Trattamento dei dati personali</a></li>
           <li><a href="#" data-doc="cookie">Cookie Policy</a></li>
         </ul>
       </div>
